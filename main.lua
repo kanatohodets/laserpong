@@ -66,6 +66,9 @@ function love.keypressed( key, unicode )
 	if key == "escape" then
 		love.event.push("quit")
 	end
+	if key == " " then
+		SFX.playSong(SFX.songList[(songIndex+1)%4+1])
+	end
 	if curState == states.ip then
 		if key == "enter" or key == "return" then
 
