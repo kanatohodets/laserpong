@@ -29,12 +29,17 @@ function BallClass:new(x, y)
 end
 
 function BallClass:draw()
-
+    love.graphics.setColor(COLORS.darkblue)
+    love.graphics.circle("fill",self.x,self.y,self.radius)
 end
 
-function BallClass:update()
-    self.x = self.x + self.xVel
-    self.y = self.y + self.yVel
+function BallClass:update(dt)
+    self.x = self.x + self.xVel * dt
+    self.y = self.y + self.yVel * dt
+    if self.y <= 0 or self.y >= love.graphics.getHeight() then
+        self.y = self.y - self.yVel * dt
+        self:hitWall()
+    end
 end
 
 function BallClass:hitEntity(entity)
