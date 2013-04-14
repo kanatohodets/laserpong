@@ -41,7 +41,7 @@ function BallClass:update(dt)
     else
         self.x = self.x + self.xVel * dt
         self.y = self.y + self.yVel * dt
-        if self.y <= 0 or self.y >= love.graphics.getHeight() then
+        if self.y - self.radius <= 0 or self.y + self.radius >= love.graphics.getHeight() then
             self.y = self.y - self.yVel * dt
             self:hitWall()
         end
