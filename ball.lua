@@ -1,7 +1,7 @@
 
 BallClass = {}
 BallClass.xVel = 200
-BallClass.yVel = 200
+BallClass.yVel = 80
 BallClass.radius = 9
 BallClass.waitTime = 2
 
@@ -86,6 +86,7 @@ end
 
 function BallClass:hitLaser()
     self.xVel = -1 * self.xVel
+    self.yVel = self.yVel * self.hitVelocityMultInc
 end
 
 function BallClass:hitWall()
