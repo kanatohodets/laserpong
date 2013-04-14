@@ -122,10 +122,12 @@ function PlayerClass:hitByLaser(laser)
 end
 
 function PlayerClass:shootLaser()
-    if self.laserCounter > 1 then
-        SFX.playEffect(SFX.fireLaser)
-        self.laserCounter = 0
-        table.insert(self.lasers,LaserClass:new(self.x, self.y, self))
+    if ball.waiting <= 0 then
+        if self.laserCounter > 1 then
+            SFX.playEffect(SFX.fireLaser)
+            self.laserCounter = 0
+            table.insert(self.lasers,LaserClass:new(self.x, self.y, self))
+        end
     end
 end
 
