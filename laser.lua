@@ -1,49 +1,39 @@
-LaserClass = {}
-LaserClass.speed = 500
-LaserClass.radius = 10
+require "movingEntity"
 
-function LaserClass:new(x, y, owner)
-    local me = {}
-    setmetatable(me, self)
-    self.__index = self
-    self.__newindex = function(t, k, v)
-        if self.k ~= nil then
-            error("trying to set new field to LaserClass table")
-        else
-            rawset(t, k, v)
-        end
-    end
-    
-    me.x = x
-    me.y = y
+Laser = class("Laser")
+Laser.xVel = 500
+Laser.radius = 10
+Laser.boundingShape = "circle"
 
+function Laser:new(x, y, owner)
+	local me = createMovingEntity(self, x, y)
+        
     me.team = owner.team
     me.alive = true
-
     return me
 end
 
-function LaserClass:draw()
-    if (self.team == 0) then
+function Laser:draw()
+    if self.team == 0 then
         love.graphics.setColor(COLORS.red)
-    elseif (self.team == 1) then
+    elseif self.team == 1 then
         love.graphics.setColor(COLORS.blue)
     end
-    love.graphics.circle("fill",self.x,self.y,self.radius)
+    love.graphics.circle("fill", self.x, self.y, self.radius)
 end
 
-function LaserClass:update(dt)
+function Laser:update(dt)
     local player1 = players[0]
     local player2 = players[1]
 
-    if (self.team == 0) then
-        self.x = self.x + self.speed * dt
-    elseif (self.team == 1) then
-        self.x = self.x - self.speed * dt
+    if self.team == 0 then
+        self.x = self.x + self.xVel * dt
+    elseif self.team == 1 then
+        self.x = self.x - self.xVel * dt
     end
 
-    if circsCollide(self.x,self.y,self.radius,ball.x,ball.y,ball.radius) then
-        if self.team == 0 and ball.xVel < 0 or self.team == 1 and ball.xVel > 0 then
+    if collide(self, ball) then
+        if (self.team == 0 and ball.xVel < 0) or (self.team == 1 and ball.xVel > 0) then
             self:hit(ball)
             ball:hitLaser(self)
             SFX.playEffect(SFX.laserHitBall)
@@ -52,25 +42,23 @@ function LaserClass:update(dt)
         end
     end
 
-    if rectsCollide(self.x-self.radius,self.y-self.radius,self.radius*2,self.radius*2,player1.x-player1.width/2,player1.y-player1.height/2,player1.width,player1.height) then
+    if collide(self, player1) then
         self:hit(player1)
         player1:hitByLaser(self)
     end
 
-    if rectsCollide(self.x-self.radius,self.y-self.radius,self.radius*2,self.radius*2,player2.x-player2.width/2,player2.y-player2.height/2,player2.width,player2.height) then
+    if collide(self, player2) then
         self:hit(player2)
         player2:hitByLaser(self)
     end
 end
 
-function LaserClass:hit(struckEntity)
+function Laser:hit(struckEntity)
     if struckEntity.team ~= self.team then
         self:die()
     end
 end
 
-function LaserClass:die()
+function Laser:die()
     self.alive = false
 end
-
-

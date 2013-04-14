@@ -1,48 +1,35 @@
+require "movingEntity"
 
-BallClass = {}
-BallClass.xVel = 400
-BallClass.yVel = 200
-BallClass.radius = 9
-BallClass.waitTime = 2
+Ball = class("Ball")
+Ball.boundingShape = "circle"
+Ball.xVel = 400
+Ball.yVel = 200
+Ball.radius = 9
+Ball.waitTime = 2
 
-BallClass.hitVelocityMultInc = 1.35
-BallClass.hitVelocityMultDec = 0.9
+Ball.hitVelocityMultInc = 1.35
+Ball.hitVelocityMultDec = 0.9
 
-function BallClass:new(x, y)
-    local me = {}
-    setmetatable(me, self)
-    self.__index = self
-    self.__newindex = function(t, k, v)
-        if self.k ~= nil then
-            error("trying to set new field to BallClass table")
-        else
-            rawset(t, k, v)
-        end
-    end
-    
-    me.x = x
-    me.y = y
+function Ball:new(x, y)
+	local me = createMovingEntity(self, x, y)
 
-    me.xVel = self.xVel
-    me.yVel = self.startingYVel
-    me.waiting = BallClass.waitTime
-
+    me.waiting = Ball.waitTime
     me.alive = true
     return me
 end
 
-function BallClass:draw()
+function Ball:draw()
     love.graphics.setColor(COLORS.white)
-    love.graphics.circle("fill",self.x,self.y,self.radius)
+    love.graphics.circle("fill", self.x, self.y, self.radius)
 end
 
-function BallClass:update(dt)
+function Ball:update(dt)
     if self.waiting > 0 then
         self.waiting = self.waiting - dt
     else
         self.x = self.x + self.xVel * dt
         self.y = self.y + self.yVel * dt
-        if self.y - self.radius <= 0 or self.y + self.radius >= love.graphics.getHeight() then
+        if (self.y - self.radius <= 0) or (self.y + self.radius >= love.graphics.getHeight()) then
             self.y = self.y - self.yVel * dt
             self:hitWall()
         end
@@ -57,25 +44,28 @@ function BallClass:update(dt)
     end
 end
 
-function BallClass:reset()
+function Ball:reset()
     players[0]:reset()
     players[1]:reset()
+
     if math.random() < .5 then
-        self.yVel = BallClass.yVel
+        self.yVel = Ball.yVel
     else
-        self.yVel = BallClass.yVel*-1
+        self.yVel = Ball.yVel*-1
     end
-    self.waiting = BallClass.waitTime
+
+    self.waiting = Ball.waitTime
     self.x = love.graphics.getWidth()/2
     self.y = love.graphics.getHeight()/2
+
     if math.random() < .5 then
-        self.xVel = BallClass.xVel
+        self.xVel = Ball.xVel
     else
-        self.xVel = BallClass.xVel*-1
+        self.xVel = Ball.xVel*-1
     end
 end
 
-function BallClass:hitPlayer(player)
+function Ball:hitPlayer(player)
     if (self.yVel - 0) * (self.y - player.y) > 0 then
         self.yVel = self.yVel * self.hitVelocityMultInc
     else
@@ -84,15 +74,15 @@ function BallClass:hitPlayer(player)
     self.xVel = -1 * self.xVel
 end
 
-function BallClass:hitLaser()
+function Ball:hitLaser()
     self.xVel = -1 * self.xVel
     self.yVel = self.yVel * self.hitVelocityMultInc
 end
 
-function BallClass:hitWall()
+function Ball:hitWall()
     self.yVel = -1 * self.yVel
 end
 
-function BallClass:die()
+function Ball:die()
 
 end
