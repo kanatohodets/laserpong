@@ -1,3 +1,5 @@
+require "ball"
+require "laser"
 
 PlayerClass = {}
 PlayerClass.speed = 5
@@ -35,7 +37,14 @@ function PlayerClass:new(x, y, teamNum)
 end
 
 function PlayerClass:draw()
-
+    local rectX = math.floor(self.x - self.width / 2)
+    local rectY = math.floor(self.y - self.height / 2)
+    if (team == 0) then
+        love.graphics.setColor(COLORS.red)
+    elseif (team == 1) then
+        love.graphics.setColor(COLORS.blue)
+    end
+    love.graphics.rectangle('fill', rectX, rectY, self.width, self.height)
 end
 
 function PlayerClass:moveUp()

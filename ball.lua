@@ -1,3 +1,4 @@
+
 BallClass = {}
 BallClass.xVel = 5
 BallClass.yVel = 5
@@ -36,9 +37,13 @@ function BallClass:update()
     self.y = self.y + self.yVel
 end
 
-function BallClass:hit(x, y, team)
+function BallClass:hitEntity(entity)
     self.yVel = self.yVel * self.hitVelocityMult
     self.xVel = -1 * self.xVel
+end
+
+function BallClass:hitWall()
+    self.yVel = -1 * self.yVel
 end
 
 function BallClass:die()
