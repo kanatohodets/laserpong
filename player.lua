@@ -2,17 +2,14 @@ require "ball"
 require "laser"
 
 PlayerClass = {}
-PlayerClass.speed = 200
+PlayerClass.speed = 500
 PlayerClass.width = 12
 PlayerClass.height = 100
 
-PlayerClass.laserDelay = 1
+PlayerClass.laserDelay = 0.30
 
 --Width multiplied by this on laser impact
-PlayerClass.hitPenalty = 0.9
-
-PlayerClass.maxLives = 5
-
+PlayerClass.hitPenalty = 0.7
 
 function PlayerClass:new(x, y, teamNum)
     local me = {}
@@ -127,7 +124,7 @@ end
 
 function PlayerClass:shootLaser()
     if ball.waiting <= 0 then
-        if self.laserCounter > 1 then
+        if self.laserCounter > self.laserDelay then
             SFX.playEffect(SFX.fireLaser)
             self.laserCounter = 0
             table.insert(self.lasers,LaserClass:new(self.x, self.y, self))
