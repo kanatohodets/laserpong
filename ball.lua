@@ -5,7 +5,8 @@ BallClass.yVel = 200
 BallClass.radius = 9
 BallClass.waitTime = 2
 
-BallClass.hitVelocityMult = 1.1
+BallClass.hitVelocityMultInc = 1.1
+BallClass.hitVelocityMultDec = 0.9
 
 function BallClass:new(x, y)
     local me = {}
@@ -31,7 +32,7 @@ function BallClass:new(x, y)
 end
 
 function BallClass:draw()
-    love.graphics.setColor(COLORS.darkblue)
+    love.graphics.setColor(COLORS.white)
     love.graphics.circle("fill",self.x,self.y,self.radius)
 end
 
@@ -41,7 +42,7 @@ function BallClass:update(dt)
     else
         self.x = self.x + self.xVel * dt
         self.y = self.y + self.yVel * dt
-        if self.y <= 0 or self.y >= love.graphics.getHeight() then
+        if self.y - self.radius <= 0 or self.y + self.radius >= love.graphics.getHeight() then
             self.y = self.y - self.yVel * dt
             self:hitWall()
         end
@@ -74,8 +75,16 @@ function BallClass:reset()
     end
 end
 
-function BallClass:hitEntity(entity)
-    self.yVel = self.yVel * self.hitVelocityMult
+function BallClass:hitPlayer(player)
+    if (self.yVel - 0) * (self.y - player.y) > 0 then
+        self.yVel = self.yVel * self.hitVelocityMultInc
+    else
+        self.yVel = self.yVel * self.hitVelocityMultDec
+    end
+    self.xVel = -1 * self.xVel
+end
+
+function BallClass:hitLaser()
     self.xVel = -1 * self.xVel
 end
 
