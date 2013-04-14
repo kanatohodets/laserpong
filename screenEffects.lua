@@ -84,3 +84,45 @@ ScreenFX.redFlash = {
     	ScreenFX.redFlash.timeSince = 0
 	end,
 }
+
+ScreenFX.greenFlash = {
+	timeSince = 3,
+	update = function(dt)
+		ScreenFX.bgColor = ScreenFX.greenFlash.getBGColor(ScreenFX.greenFlash.timeSince)
+		ScreenFX.greenFlash.timeSince = ScreenFX.greenFlash.timeSince + dt
+	end,
+	getBGColor = function(t)
+		local length = .25
+    	local max = 125
+    	if t >= length then
+    		ScreenFX.removeActiveEffect(ScreenFX.greenFlash)
+    	    return {0,0,0}
+    	else
+    	    return {0,max - (max/length)*t,0}
+    	end
+    end,
+    start = function()
+    	ScreenFX.greenFlash.timeSince = 0
+	end,
+}
+
+ScreenFX.blueFlash = {
+	timeSince = 3,
+	update = function(dt)
+		ScreenFX.bgColor = ScreenFX.blueFlash.getBGColor(ScreenFX.blueFlash.timeSince)
+		ScreenFX.blueFlash.timeSince = ScreenFX.blueFlash.timeSince + dt
+	end,
+	getBGColor = function(t)
+		local length = .25
+    	local max = 125
+    	if t >= length then
+    		ScreenFX.removeActiveEffect(ScreenFX.blueFlash)
+    	    return {0,0,0}
+    	else
+    	    return {0,0,max - (max/length)*t }
+    	end
+    end,
+    start = function()
+    	ScreenFX.blueFlash.timeSince = 0
+	end,
+}

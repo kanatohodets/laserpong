@@ -48,6 +48,7 @@ function LaserClass:update(dt)
             ball:hitLaser(self)
             SFX.playEffect(SFX.laserHitBall)
             ScreenFX.startEffect(ScreenFX.smallShake)
+            ScreenFX.startEffect(ScreenFX.greenFlash)
         end
     end
 
