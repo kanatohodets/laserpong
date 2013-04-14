@@ -46,6 +46,7 @@ function LaserClass:update(dt)
         self:hit(ball)
         ball:hitLaser(self)
         SFX.playEffect(SFX.laserHitBall)
+        ScreenFX.startEffect(ScreenFX.smallShake)
     end
 
     if rectsCollide(self.x-self.radius,self.y-self.radius,self.radius*2,self.radius*2,player1.x-player1.width/2,player1.y-player1.height/2,player1.width,player1.height) then

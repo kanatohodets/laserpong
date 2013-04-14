@@ -28,6 +28,7 @@ require "player"
 require "laser"
 require "ball"
 require "sfx"
+require "screenEffects"
 
 font = love.graphics.newFont("Courier New Bold.ttf", 15)
 
@@ -50,6 +51,7 @@ function love.update(dt)
 	if curState == states.ip then
 
 	elseif curState == states.ingame then
+		ScreenFX.evaluateFX(dt)
 	    players[0]:update(dt)
 	    players[1]:update(dt)
 
@@ -114,6 +116,8 @@ function love.draw()
 		love.graphics.print("Enter the host's ip address and press enter (leave blank if you're a server):", 100, 100)
 		love.graphics.print("IP: "..ipString, 100, 150)
 	elseif curState == states.ingame then
+		love.graphics.setBackgroundColor(ScreenFX.bgColor)
+		love.graphics.translate(ScreenFX.coordTranslate[1], ScreenFX.coordTranslate[2])
 		love.graphics.setColor(COLORS.white)
 		love.graphics.print(players[0].score, love.graphics.getWidth()/3, love.graphics.getHeight()/3)
 		love.graphics.print(players[1].score, love.graphics.getWidth()/3*2, love.graphics.getHeight()/3)

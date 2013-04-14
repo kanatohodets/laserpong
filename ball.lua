@@ -48,10 +48,10 @@ function BallClass:update(dt)
         end
 
         if self.x < -self.radius then
-            players[0].score = players[0].score + 1
+            players[1].score = players[1].score + 1
             self:reset()
         elseif self.x > love.graphics.getWidth() + self.radius then
-            players[1].score = players[1].score + 1
+            players[0].score = players[0].score + 1
             self:reset()
         end
     end
