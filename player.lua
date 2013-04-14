@@ -118,3 +118,4 @@ function PlayerClass:shootLaser()
         table.insert(self.lasers,LaserClass:new(self.x, self.y, self))
     end
 end
+

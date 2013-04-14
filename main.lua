@@ -29,6 +29,8 @@ require "laser"
 require "ball"
 require "sfx"
 
+font = love.graphics.newFont("Courier New Bold.ttf", 15)
+
 players = {}
 ball = nil
 
@@ -36,7 +38,7 @@ function love.load()
 	players[0] = PlayerClass:new(50,love.graphics.getHeight()/2,0)
 	players[1] = PlayerClass:new(love.graphics.getWidth()-50,love.graphics.getHeight()/2,1)
 
-	ball = BallClass:new(200,200)
+	ball = BallClass:new(love.graphics.getWidth()/2,love.graphics.getHeight()/2)
 end
 
 function love.update(dt)
@@ -89,6 +91,9 @@ function love.keyreleased(key)
 end
 
 function love.draw()
+	love.graphics.setColor(COLORS.white)
+	love.graphics.print(players[0].score, love.graphics.getWidth()/3, love.graphics.getHeight()/3)
+	love.graphics.print(players[1].score, love.graphics.getWidth()/3*2, love.graphics.getHeight()/3)
 	for i=0,1 do
 		players[i]:draw()
 	end
