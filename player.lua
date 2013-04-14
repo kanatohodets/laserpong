@@ -48,11 +48,15 @@ function PlayerClass:draw()
 end
 
 function PlayerClass:moveUp()
-    table.insert(self.moveQueue, 1, -1)
+    if (self.y > self.height/2) then
+        table.insert(self.moveQueue, 1, -1)
+    end
 end
 
 function PlayerClass:moveDown()
-    table.insert(self.moveQueue, 1, 1)
+    if (self.y < love.graphics.getHeight() - self.height/2) then
+        table.insert(self.moveQueue, 1, 1)
+    end
 end
 
 function PlayerClass:stop(dir)
