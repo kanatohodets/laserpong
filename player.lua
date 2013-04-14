@@ -114,6 +114,7 @@ function PlayerClass:hitByLaser(laser)
     if laser.team ~= self.team then
         self.height = self.height * self.hitPenalty
         SFX.playEffect(SFX.hitByLaser)
+        ScreenFX.startEffect(ScreenFX.smallShake)
         if self.team == 0 then
             ScreenFX.startEffect(ScreenFX.redFlash)
         else

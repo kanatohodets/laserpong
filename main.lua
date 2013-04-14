@@ -1,3 +1,9 @@
+math.randomseed( os.time() )
+math.random()
+math.random()
+math.random()
+math.random()
+
 COLORS = {gold = {255,215,0}, red = {255,0,0}, black = {0,0,0},
     white = {255,255,255},gray = {100,100,100},grey = {120,100,100},brown={145,100,50},
     green={0,200,0},yellow={255,255,0},magenta={255,0,160},blue={0,180,255},darkblue={0, 100, 255}}
@@ -67,7 +73,8 @@ function love.keypressed( key, unicode )
 		love.event.push("quit")
 	end
 	if key == " " then
-		SFX.playSong(SFX.songList[(songIndex+1)%4+1])
+		songIndex = songIndex + 1
+		SFX.playSong(SFX.songList[songIndex%4+1])
 	end
 	if curState == states.ip then
 		if key == "enter" or key == "return" then
