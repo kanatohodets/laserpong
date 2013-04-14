@@ -17,7 +17,7 @@ SFX.songc:setLooping(true)
 SFX.songd = love.audio.newSource("sfx/songd.mp3", "static")
 SFX.songd:setLooping(true)
 
-SFX.songList = {songa, songb, songc, songd}
+SFX.songList = {SFX.songa, SFX.songb, SFX.songc, SFX.songd}
 
 SFX.curSong = nil
 
