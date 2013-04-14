@@ -30,17 +30,24 @@ require "ball"
 require "sfx"
 require "screenEffects"
 
-font = love.graphics.newFont("Courier New Bold.ttf", 15)
+font = love.graphics.newFont("Courier New Bold.ttf", 16)
+love.graphics.setFont(font)
+function printCentered(s, x, y, width, height)
+	local fw=font:getWidth(s)
+	local fh=font:getHeight()
+	love.graphics.print(s, x+width/2-fw/2, y+height/2-fh/2)
+end
+
 
 players = {}
 ball = nil
 
-states = {ip=1,ingame=2}
-curState = states.ingame
+states = {ip=1,ingame=2,title=3}
+curState = states.title
 
 ipString = ""
 
-songIndex = math.random(#SFX.songList)
+songIndex = math.random(4)
 
 function love.load()
 	players[0] = PlayerClass:new(50,love.graphics.getHeight()/2,0)
@@ -48,6 +55,7 @@ function love.load()
 
 	ball = BallClass:new(love.graphics.getWidth()/2,love.graphics.getHeight()/2)
 	SFX.playSong(SFX.songList[songIndex])
+	print(SFX.songList[songIndex])
 end
 
 function love.update(dt)
@@ -97,6 +105,10 @@ function love.keypressed( key, unicode )
 	    if key == "k" then
 	        players[1]:shootLaser()
 	    end
+	elseif curState == states.title then
+		if key == "enter" or key == "return" then
+			curState = states.ingame
+		end
 	end
 end
 
@@ -132,6 +144,15 @@ function love.draw()
 		end
 
 		ball:draw()
+	elseif curState == states.title then
+		printCentered("LAZERPONG", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
+		love.graphics.print("Controls:", 200, 200)
+		love.graphics.print("Player 1:", 200, 250)
+		love.graphics.print("Q,S,D: up, down, shoot", 200, 270)
+		love.graphics.print("Player 2:", 500, 250)
+		love.graphics.print("P,L,K: up, down, shoot", 500, 270)
+		love.graphics.print("Spacebar: change song", 600, 320)
+		printCentered("Press ENTER to start the game!", 0, love.graphics.getHeight()/2, love.graphics.getWidth(), love.graphics.getHeight()/2)
 	end
 end
 
