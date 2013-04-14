@@ -16,6 +16,14 @@ rectsCollide = function(lefta, topa, wa, ha, leftb, topb, wb, hb)
     return true
 end
 
+circsCollide = function(xa, ya, ra, xb, yb, rb)
+	local dist = math.sqrt((xa*xa)-(xb*xb)+((ya*ya)-yb*yb))
+	if dist < ra + rb then
+		return true
+	end
+	return false
+end
+
 require "player"
 require "laser"
 require "ball"
