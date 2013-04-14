@@ -55,7 +55,7 @@ function PlayerClass:moveDown()
     table.insert(self.moveQueue, 1, 1)
 end
 
-function PaddleClass:stop(dir)
+function PlayerClass:stop(dir)
     for k, v in ipairs(self.moveQueue) do
         if v == dir then
             table.remove(self.moveQueue, k)
