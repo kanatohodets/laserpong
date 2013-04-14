@@ -34,6 +34,11 @@ font = love.graphics.newFont("Courier New Bold.ttf", 15)
 players = {}
 ball = nil
 
+states = {ip=1,ingame=2}
+curState = states.ingame
+
+ipString = ""
+
 function love.load()
 	players[0] = PlayerClass:new(50,love.graphics.getHeight()/2,0)
 	players[1] = PlayerClass:new(love.graphics.getWidth()-50,love.graphics.getHeight()/2,1)
@@ -42,63 +47,82 @@ function love.load()
 end
 
 function love.update(dt)
+	if curState == states.ip then
 
-    players[0]:update(dt)
-    players[1]:update(dt)
+	elseif curState == states.ingame then
+	    players[0]:update(dt)
+	    players[1]:update(dt)
 
-	ball:update(dt)
+		ball:update(dt)
+	end
 end
 
-function love.keypressed( key )
+function love.keypressed( key, unicode )
 	if key == "escape" then
 		love.event.push("quit")
 	end
+	if curState == states.ip then
+		if key == "enter" or key == "return" then
 
-	if key == "q" then
-        players[0]:moveUp()
-    end
-    if key == "s" then
-        players[0]:moveDown()
-    end
-    if key == "d" then
-        players[0]:shootLaser()
-    end
+		elseif unicode == 127 and string.len(ipString) > 0 then
+			ipString = string.sub(ipString, 0, string.len(ipString)-1)
+		else
+			ipString = ipString..key
+		end
+	elseif curState == states.ingame then
+		if key == "q" then
+	        players[0]:moveUp()
+	    end
+	    if key == "s" then
+	        players[0]:moveDown()
+	    end
+	    if key == "d" then
+	        players[0]:shootLaser()
+	    end
 
-    if key == "p" then
-        players[1]:moveUp()
-    end
-    if key == "l" then
-        players[1]:moveDown()
-    end
-    if key == "k" then
-        players[1]:shootLaser()
-    end
+	    if key == "p" then
+	        players[1]:moveUp()
+	    end
+	    if key == "l" then
+	        players[1]:moveDown()
+	    end
+	    if key == "k" then
+	        players[1]:shootLaser()
+	    end
+	end
 end
 
 function love.keyreleased(key)
-	if key == "q" then
-		players[0]:stop(-1)
-	elseif key == "s" then
-		players[0]:stop(1)
-	end
+	if curState == states.ingame then
+		if key == "q" then
+			players[0]:stop(-1)
+		elseif key == "s" then
+			players[0]:stop(1)
+		end
 
-	if key == "p" then
-        players[1]:stop(-1)
-    end
-    if key == "l" then
-        players[1]:stop(1)
-    end
+		if key == "p" then
+	        players[1]:stop(-1)
+	    end
+	    if key == "l" then
+	        players[1]:stop(1)
+	    end
+	end
 end
 
 function love.draw()
-	love.graphics.setColor(COLORS.white)
-	love.graphics.print(players[0].score, love.graphics.getWidth()/3, love.graphics.getHeight()/3)
-	love.graphics.print(players[1].score, love.graphics.getWidth()/3*2, love.graphics.getHeight()/3)
-	for i=0,1 do
-		players[i]:draw()
-	end
+	if curState == states.ip then
+		love.graphics.print("Enter the host's ip address and press enter (leave blank if you're a server):", 100, 100)
+		love.graphics.print("IP: "..ipString, 100, 150)
+	elseif curState == states.ingame then
+		love.graphics.setColor(COLORS.white)
+		love.graphics.print(players[0].score, love.graphics.getWidth()/3, love.graphics.getHeight()/3)
+		love.graphics.print(players[1].score, love.graphics.getWidth()/3*2, love.graphics.getHeight()/3)
+		for i=0,1 do
+			players[i]:draw()
+		end
 
-	ball:draw()
+		ball:draw()
+	end
 end
 
 
