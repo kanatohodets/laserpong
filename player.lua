@@ -29,6 +29,7 @@ function PlayerClass:new(x, y, teamNum)
     me.width = self.width
     me.score = 0
     me.lasers = {}
+    me.moveQueue = {}
 
     return me
 end
@@ -38,14 +39,23 @@ function PlayerClass:draw()
 end
 
 function PlayerClass:moveUp()
-    self.y = self.y + self.speed
+    table.insert(self.moveQueue, 1, -1)
 end
 
 function PlayerClass:moveDown()
-    self.y = self.y - self.speed
+    table.insert(self.moveQueue, 1, 1)
 end
 
-function PlayerClass:laserHit()
+function PaddleClass:stop(dir)
+    for k, v in ipairs(self.moveQueue) do
+        if v == dir then
+            table.remove(self.moveQueue, k)
+            return
+        end
+    end
+end
+
+function PlayerClass:hitByLaser(laser)
     self.width = self.width * self.hitPenalty
 end
 
