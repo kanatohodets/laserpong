@@ -3,6 +3,7 @@ BallClass = {}
 BallClass.xVel = 200
 BallClass.yVel = 200
 BallClass.radius = 9
+BallClass.waitTime = 2
 
 BallClass.hitVelocityMult = 1.1
 
@@ -23,7 +24,7 @@ function BallClass:new(x, y)
 
     me.xVel = self.xVel
     me.yVel = self.startingYVel
-    me.waiting = 1
+    me.waiting = BallClass.waitTime
 
     me.alive = true
     return me
@@ -56,7 +57,14 @@ function BallClass:update(dt)
 end
 
 function BallClass:reset()
-    self.waiting = 1
+    players[0]:reset()
+    players[1]:reset()
+    if math.random() < .5 then
+        self.yVel = BallClass.yVel
+    else
+        self.yVel = BallClass.yVel*-1
+    end
+    self.waiting = BallClass.waitTime
     self.x = love.graphics.getWidth()/2
     self.y = love.graphics.getHeight()/2
     if math.random() < .5 then

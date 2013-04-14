@@ -123,3 +123,10 @@ function PlayerClass:shootLaser()
     end
 end
 
+function  PlayerClass:reset()
+    self.y = love.graphics.getHeight()/2
+    self.height = PlayerClass.height
+    self.laserCounter = 0
+    self.lasers = {}
+end
+
