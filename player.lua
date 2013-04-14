@@ -70,6 +70,10 @@ function PlayerClass:update(dt)
         end
     end
 
+    if rectsCollide(self.x,self.y-self.height/2,self.width,self.height,ball.x,ball.y,ball.radius*2,ball.radius*2) then
+        ball:hitEntity(self)
+    end
+
     for i = 1,#self.lasers do
         self.lasers[i]:update(dt)
     end
