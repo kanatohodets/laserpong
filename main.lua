@@ -40,11 +40,14 @@ curState = states.ingame
 
 ipString = ""
 
+songIndex = math.random(#SFX.songList)
+
 function love.load()
 	players[0] = PlayerClass:new(50,love.graphics.getHeight()/2,0)
 	players[1] = PlayerClass:new(love.graphics.getWidth()-50,love.graphics.getHeight()/2,1)
 
 	ball = BallClass:new(love.graphics.getWidth()/2,love.graphics.getHeight()/2)
+	SFX.playSong(SFX.songList[songIndex])
 end
 
 function love.update(dt)
