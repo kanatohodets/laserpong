@@ -1,6 +1,6 @@
 LaserClass = {}
 LaserClass.speed = 200
-LaserClass.radius = 5
+LaserClass.radius = 8
 
 function LaserClass:new(x, y, owner)
     local me = {}

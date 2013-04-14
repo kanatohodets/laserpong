@@ -2,7 +2,7 @@
 BallClass = {}
 BallClass.xVel = 200
 BallClass.yVel = 200
-BallClass.radius = 4
+BallClass.radius = 9
 
 BallClass.hitVelocityMult = 1.1
 
