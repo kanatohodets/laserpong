@@ -3,7 +3,8 @@ require "laser"
 
 PlayerClass = {}
 PlayerClass.speed = 5
-PlayerClass.width = 100
+PlayerClass.width = 12
+PlayerClass.height = 100
 
 --Width multiplied by this on laser impact
 PlayerClass.hitPenalty = 0.9
@@ -25,7 +26,7 @@ function PlayerClass:new(x, y, teamNum)
     
     me.team = teamNum
     me.x = x
-    my.y = y
+    me.y = y
     
     me.lives = self.maxLives
     me.width = self.width

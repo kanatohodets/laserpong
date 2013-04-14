@@ -32,11 +32,30 @@ local entities = {}
 local players = {}
 
 function love.load()
+	players[0] = PlayerClass:new(50,50,0)
+	players[1] = PlayerClass:new(love.graphics.getWidth()-50,50,1)
 
+	entities[0] = BallClass:new(200,200)
 end
 
 function love.update(dt)
+	for i=0,1 do
+		--players[i].update(dt)
+	end
 
+	for i=0,#entities do
+		entities[i]:update(dt)
+	end
+end
+
+function love.draw()
+	for i=0,1 do
+		players[i]:draw()
+	end
+
+	for i=0,#entities do
+		entities[i]:draw()
+	end
 end
 
 
