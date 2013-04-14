@@ -48,12 +48,12 @@ function LaserClass:update(dt)
         SFX.playEffect(SFX.laserHitBall)
     end
 
-    if rectsCollide(self.x,self.y,self.radius*2,self.radius*2,player1.x,player1.y-player1.height/2,player1.width,player1.height) then
+    if rectsCollide(self.x-self.radius,self.y-self.radius,self.radius*2,self.radius*2,player1.x-player1.width/2,player1.y-player1.height/2,player1.width,player1.height) then
         self:hit(player1)
         player1:hitByLaser(self)
     end
 
-    if rectsCollide(self.x,self.y,self.radius*2,self.radius*2,player2.x,player2.y-player2.height/2,player2.width,player2.height) then
+    if rectsCollide(self.x-self.radius,self.y-self.radius,self.radius*2,self.radius*2,player2.x-player2.width/2,player2.y-player2.height/2,player2.width,player2.height) then
         self:hit(player2)
         player2:hitByLaser(self)
     end

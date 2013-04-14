@@ -42,8 +42,8 @@ function PlayerClass:new(x, y, teamNum)
 end
 
 function PlayerClass:draw()
-    local rectX = math.floor(self.x - self.width / 2)
-    local rectY = math.floor(self.y - self.height / 2)
+    local rectX = self.x - self.width / 2
+    local rectY = self.y - self.height / 2
     if (self.team == 0) then
         love.graphics.setColor(COLORS.red)
     elseif (self.team == 1) then
@@ -70,8 +70,13 @@ function PlayerClass:update(dt)
         end
     end
 
-    if rectsCollide(self.x,self.y-self.height/2,self.width,self.height,ball.x,ball.y,ball.radius*2,ball.radius*2) then
+    if rectsCollide(self.x-self.width/2,self.y-self.height/2,self.width,self.height,ball.x-ball.radius,ball.y-ball.radius,ball.radius*2,ball.radius*2) then
         ball:hitEntity(self)
+        if (self.team == 0) then
+            ball.x = self.x + ball.radius + self.width
+        elseif (self.team == 1) then
+            ball.x = self.x - ball.radius - self.width
+        end
     end
 
     for i = 1,#self.lasers do
