@@ -1,7 +1,7 @@
 
 BallClass = {}
-BallClass.xVel = 200
-BallClass.yVel = 80
+BallClass.xVel = 400
+BallClass.yVel = 400
 BallClass.radius = 9
 BallClass.waitTime = 2
 
