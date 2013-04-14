@@ -5,7 +5,7 @@ BallClass.yVel = 200
 BallClass.radius = 9
 BallClass.waitTime = 2
 
-BallClass.hitVelocityMultInc = 1.1
+BallClass.hitVelocityMultInc = 1.35
 BallClass.hitVelocityMultDec = 0.9
 
 function BallClass:new(x, y)

@@ -61,7 +61,6 @@ function love.load()
 
 	ball = BallClass:new(love.graphics.getWidth()/2,love.graphics.getHeight()/2)
 	SFX.playSong(SFX.songList[songIndex])
-	print(SFX.songList[songIndex])
 end
 
 function love.update(dt)
