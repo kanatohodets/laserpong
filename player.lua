@@ -127,3 +127,11 @@ function PlayerClass:shootLaser()
         table.insert(self.lasers,LaserClass:new(self.x, self.y, self))
     end
 end
+
+function  PlayerClass:reset()
+    self.y = love.graphics.getHeight()/2
+    self.height = PlayerClass.height
+    self.laserCounter = 0
+    self.lasers = {}
+end
+
