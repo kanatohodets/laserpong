@@ -45,6 +45,7 @@ function LaserClass:update(dt)
     if circsCollide(self.x,self.y,self.radius,ball.x,ball.y,ball.radius) then
         self:hit(ball)
         ball:hitEntity(self)
+        SFX.playEffect(SFX.laserHitBall)
     end
 
     if rectsCollide(self.x,self.y,self.radius*2,self.radius*2,player1.x,player1.y,player1.width,player1.height) then

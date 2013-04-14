@@ -107,9 +107,14 @@ end
 function PlayerClass:hitByLaser(laser)
     if laser.team ~= self.team then
         self.height = self.height * self.hitPenalty
+        SFX.playEffect(SFX.hitByLaser)
     end
 end
 
 function PlayerClass:shootLaser()
-    table.insert(self.lasers,LaserClass:new(self.x, self.y, self))
+    if self.laserCounter > 1 then
+        SFX.playEffect(SFX.fireLaser)
+        self.laserCounter = 0
+        table.insert(self.lasers,LaserClass:new(self.x, self.y, self))
+    end
 end
