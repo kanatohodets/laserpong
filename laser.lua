@@ -44,7 +44,7 @@ function LaserClass:update(dt)
 
     if circsCollide(self.x,self.y,self.radius,ball.x,ball.y,ball.radius) then
         self:hit(ball)
-        ball:hitEntity(self)
+        ball:hitLaser(self)
         SFX.playEffect(SFX.laserHitBall)
     end
 

@@ -71,7 +71,7 @@ function PlayerClass:update(dt)
     end
 
     if rectsCollide(self.x-self.width/2,self.y-self.height/2,self.width,self.height,ball.x-ball.radius,ball.y-ball.radius,ball.radius*2,ball.radius*2) then
-        ball:hitEntity(self)
+        ball:hitPlayer(self)
         if (self.team == 0) then
             ball.x = self.x + ball.radius + self.width
         elseif (self.team == 1) then
