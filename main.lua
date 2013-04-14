@@ -28,24 +28,63 @@ require "player"
 require "laser"
 require "ball"
 
-local entities = {}
-local players = {}
+players = {}
+ball = nil
 
 function love.load()
-	players[0] = PlayerClass:new(50,50,0)
-	players[1] = PlayerClass:new(love.graphics.getWidth()-50,50,1)
+	players[0] = PlayerClass:new(50,love.graphics.getHeight()/2,0)
+	players[1] = PlayerClass:new(love.graphics.getWidth()-50,love.graphics.getHeight()/2,1)
 
-	entities[0] = BallClass:new(200,200)
+	ball = BallClass:new(200,200)
 end
 
 function love.update(dt)
-	for i=0,1 do
-		--players[i].update(dt)
+
+    players[0]:update(dt)
+    players[1]:update(dt)
+
+	ball:update(dt)
+end
+
+function love.keypressed( key )
+	if key == "escape" then
+		love.event.push("quit")
 	end
 
-	for i=0,#entities do
-		entities[i]:update(dt)
+	if key == "q" then
+        players[0]:moveUp()
+    end
+    if key == "s" then
+        players[0]:moveDown()
+    end
+    if key == "d" then
+        players[0]:shootLaser()
+    end
+
+    if key == "p" then
+        players[1]:moveUp()
+    end
+    if key == "l" then
+        players[1]:moveDown()
+    end
+    if key == "k" then
+        players[1]:shootLaser()
+    end
+end
+
+function love.keyreleased(key)
+	if key == "q" then
+		players[0]:stop(-1)
+	elseif key == "s" then
+		players[0]:stop(1)
 	end
+
+	if key == "p" then
+        players[1]:stop(-1)
+    end
+    if key == "l" then
+        players[1]:stop(1)
+    end
 end
 
 function love.draw()
@@ -53,9 +92,7 @@ function love.draw()
 		players[i]:draw()
 	end
 
-	for i=0,#entities do
-		entities[i]:draw()
-	end
+	ball:draw()
 end
 
 

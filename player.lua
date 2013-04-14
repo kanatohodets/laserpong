@@ -2,9 +2,11 @@ require "ball"
 require "laser"
 
 PlayerClass = {}
-PlayerClass.speed = 5
+PlayerClass.speed = 200
 PlayerClass.width = 12
 PlayerClass.height = 100
+
+PlayerClass.laserDelay = 1
 
 --Width multiplied by this on laser impact
 PlayerClass.hitPenalty = 0.9
@@ -34,18 +36,51 @@ function PlayerClass:new(x, y, teamNum)
     me.lasers = {}
     me.moveQueue = {}
 
+    me.laserCounter = 0
+
     return me
 end
 
 function PlayerClass:draw()
     local rectX = math.floor(self.x - self.width / 2)
     local rectY = math.floor(self.y - self.height / 2)
-    if (team == 0) then
+    if (self.team == 0) then
         love.graphics.setColor(COLORS.red)
-    elseif (team == 1) then
+    elseif (self.team == 1) then
         love.graphics.setColor(COLORS.blue)
     end
     love.graphics.rectangle('fill', rectX, rectY, self.width, self.height)
+
+    for i = 1,#self.lasers do
+        self.lasers[i]:draw()
+    end
+end
+
+function PlayerClass:update(dt)
+    self.laserCounter = self.laserCounter + dt
+    if self.moveQueue[1] == 1 then
+        self.y = self.y + self.speed * dt
+        if self.y + self.height/2 > love.graphics.getHeight() then
+            self.y = love.graphics.getHeight() - self.height/2
+        end
+    elseif self.moveQueue[1] == -1 then
+        self.y = self.y - self.speed * dt
+        if self.y < self.height/2 then
+            self.y = self.height/2
+        end
+    end
+
+    for i = 1,#self.lasers do
+        self.lasers[i]:update(dt)
+    end
+
+    local goodOnes = {}
+    for i = 1,#self.lasers do
+        if self.lasers[i].alive then
+            table.insert(goodOnes,self.lasers[i])
+        end
+    end
+    self.lasers = goodOnes
 end
 
 function PlayerClass:moveUp()
@@ -70,9 +105,11 @@ function PlayerClass:stop(dir)
 end
 
 function PlayerClass:hitByLaser(laser)
-    self.width = self.width * self.hitPenalty
+    if laser.team ~= self.team then
+        self.height = self.height * self.hitPenalty
+    end
 end
 
 function PlayerClass:shootLaser()
-    self.lasers[#self.lasers] = LaserClass(self.x, self.y, self)
+    table.insert(self.lasers,LaserClass:new(self.x, self.y, self))
 end
