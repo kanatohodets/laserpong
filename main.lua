@@ -8,14 +8,14 @@ COLORS = {gold = {255,215,0}, red = {255,0,0}, black = {0,0,0},
     white = {255,255,255},gray = {100,100,100},grey = {120,100,100},brown={145,100,50},
     green={0,200,0},yellow={255,255,0},magenta={255,0,160},blue={0,180,255},darkblue={0, 100, 255}}
 
-require "OO"
-require "player"
-require "laser"
-require "ball"
-require "sfx"
-require "screenEffects"
+require "lib/OO"
+require "entity/player"
+require "entity/laser"
+require "entity/ball"
+require "lib/sfx"
+require "lib/screenEffects"
 
-local font = love.graphics.newFont("Courier New Bold.ttf", 16)
+local font = love.graphics.newFont("lib/Courier New Bold.ttf", 16)
 love.graphics.setFont(font)
 function printCentered(s, x, y, width, height)
 	local fw = font:getWidth(s)

@@ -1,6 +1,6 @@
-require "movingEntity"
-require "ball"
-require "laser"
+require "entity/movingEntity"
+require "entity/ball"
+require "entity/laser"
 
 Player = class("Player")
 Player.boundingShape = "rect"

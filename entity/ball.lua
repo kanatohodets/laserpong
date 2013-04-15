@@ -1,4 +1,4 @@
-require "movingEntity"
+require "entity/movingEntity"
 
 Ball = class("Ball")
 Ball.boundingShape = "circle"

@@ -1,4 +1,4 @@
-require "movingEntity"
+require "entity/movingEntity"
 
 Laser = class("Laser")
 Laser.xVel = 500
