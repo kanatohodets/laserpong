@@ -1,12 +1,14 @@
 require "entity/movingEntity"
 
 Laser = class("Laser")
-Laser.xVel = 500
-Laser.radius = 10
 Laser.boundingShape = "circle"
 
+-- expressed in % for easier reading
+Laser.xVel = (55.55 / 100) * love.graphics.getWidth()
+Laser.radius = (1.11 / 100) * love.graphics.getWidth()
+
 function Laser:new(x, y, owner)
-	local me = createMovingEntity(self, x, y)
+    local me = createMovingEntity(self, x, y)
         
     me.team = owner.team
     me.alive = true

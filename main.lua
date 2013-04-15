@@ -18,9 +18,9 @@ require "lib/screenEffects"
 local font = love.graphics.newFont("lib/Courier New Bold.ttf", 16)
 love.graphics.setFont(font)
 function printCentered(s, x, y, width, height)
-	local fw = font:getWidth(s)
-	local fh = font:getHeight()
-	love.graphics.print(s, x + width/2 - fw/2, y + height/2 - fh/2)
+    local fw = font:getWidth(s)
+    local fh = font:getHeight()
+    love.graphics.print(s, x + width/2 - fw/2, y + height/2 - fh/2)
 end
 
 players = {}
@@ -39,110 +39,118 @@ local ipString = ""
 local songIndex = math.random(4)
 
 function love.load()
-	players[0] = Player:new(50, love.graphics.getHeight() / 2, 0)
-	players[1] = Player:new(love.graphics.getWidth() - 50, love.graphics.getHeight() / 2, 1)
+    local w, h = love.graphics.getWidth(), love.graphics.getHeight()
+    players[0] = Player:new(50, h / 2, 0)
+    players[1] = Player:new(w - 50, h / 2, 1)
 
-	ball = Ball:new(love.graphics.getWidth() / 2,love.graphics.getHeight() / 2)
-	SFX.playSong(SFX.songList[songIndex])
+    ball = Ball:new(w / 2, h / 2)
+    SFX.playSong(SFX.songList[songIndex])
 end
 
 function love.update(dt)
-	if curState == states.ip then
+    if curState == states.ip then
         -- networking screen
-	elseif curState == states.ingame then
-		ScreenFX.evaluateFX(dt)
-	    players[0]:update(dt)
-	    players[1]:update(dt)
+    elseif curState == states.ingame and love.graphics.hasFocus() then
+        ScreenFX.evaluateFX(dt)
+        players[0]:update(dt)
+        players[1]:update(dt)
 
-		ball:update(dt)
-	end
+        ball:update(dt)
+    end
 end
 
 function love.keypressed(key, unicode)
-	if key == "escape" then
-		love.event.push("quit")
-	end
-	if key == " " then
-		songIndex = songIndex + 1
-		SFX.playSong(SFX.songList[songIndex % 4 + 1])
-	end
-	if curState == states.ip then
-		if key == "enter" or key == "return" then
+    if key == "escape" then
+        love.event.push("quit")
+    end
 
-		elseif unicode == 127 and string.len(ipString) > 0 then
-			ipString = string.sub(ipString, 0, string.len(ipString) - 1)
-		else
-			ipString = ipString .. key
-		end
-	elseif curState == states.ingame then
-		if key == "q" then
-	        players[0]:moveUp()
-	    end
-	    if key == "s" then
-	        players[0]:moveDown()
-	    end
-	    if key == "d" then
-	        players[0]:shootLaser()
-	    end
+    if key == "g" then
+        love.graphics.toggleFullscreen()
+    end
 
-	    if key == "p" then
-	        players[1]:moveUp()
-	    end
-	    if key == "l" then
-	        players[1]:moveDown()
-	    end
-	    if key == "k" then
-	        players[1]:shootLaser()
-	    end
-	elseif curState == states.title then
-		if key == "enter" or key == "return" then
-			curState = states.ingame
-		end
-	end
+    if key == " " then
+        songIndex = songIndex + 1
+        SFX.playSong(SFX.songList[songIndex % 4 + 1])
+    end
+    if curState == states.ip then
+        if key == "enter" or key == "return" then
+
+        elseif unicode == 127 and string.len(ipString) > 0 then
+            ipString = string.sub(ipString, 0, string.len(ipString) - 1)
+        else
+            ipString = ipString .. key
+        end
+    elseif curState == states.ingame then
+        if key == "q" then
+            players[0]:moveUp()
+        end
+        if key == "s" then
+            players[0]:moveDown()
+        end
+        if key == "d" then
+            players[0]:shootLaser()
+        end
+
+        if key == "p" then
+            players[1]:moveUp()
+        end
+        if key == "l" then
+            players[1]:moveDown()
+        end
+        if key == "k" then
+            players[1]:shootLaser()
+        end
+    elseif curState == states.title then
+        if key == "enter" or key == "return" then
+            curState = states.ingame
+        end
+    end
 end
 
 function love.keyreleased(key)
-	if curState == states.ingame then
-		if key == "q" then
-			players[0]:stop(-1)
-		elseif key == "s" then
-			players[0]:stop(1)
-		end
+    if curState == states.ingame then
+        if key == "q" then
+            players[0]:stop(-1)
+        elseif key == "s" then
+            players[0]:stop(1)
+        end
 
-		if key == "p" then
-	        players[1]:stop(-1)
-	    end
-	    if key == "l" then
-	        players[1]:stop(1)
-	    end
-	end
+        if key == "p" then
+            players[1]:stop(-1)
+        end
+        if key == "l" then
+            players[1]:stop(1)
+        end
+    end
 end
 
 function love.draw()
-	if curState == states.ip then
-		love.graphics.print("Enter the host's ip address and press enter (leave blank if you're a server):", 100, 100)
-		love.graphics.print("IP: "..ipString, 100, 150)
-	elseif curState == states.ingame then
-		love.graphics.setBackgroundColor(ScreenFX.bgColor)
-		love.graphics.translate(ScreenFX.coordTranslate[1], ScreenFX.coordTranslate[2])
-		love.graphics.setColor(COLORS.white)
-		love.graphics.print(players[0].score, love.graphics.getWidth() / 3, love.graphics.getHeight() / 3)
-		love.graphics.print(players[1].score, love.graphics.getWidth() / 3 * 2, love.graphics.getHeight() / 3)
-		for i=0,1 do
-			players[i]:draw()
-		end
+    local w, h = love.graphics.getWidth(), love.graphics.getHeight()
 
-		ball:draw()
-	elseif curState == states.title then
-		printCentered("LAZERPONG", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
-		love.graphics.print("Controls:", 200, 200)
-		love.graphics.print("Player 1:", 200, 250)
-		love.graphics.print("Q,S,D: up, down, shoot", 200, 270)
-		love.graphics.print("Player 2:", 500, 250)
-		love.graphics.print("P,L,K: up, down, shoot", 500, 270)
-		love.graphics.print("Spacebar: change song", 600, 320)
+    if curState == states.ip then
+        love.graphics.print("Enter the host's ip address and press enter (leave blank if you're a server):", 100, 100)
+        love.graphics.print("IP: "..ipString, 100, 150)
+    elseif curState == states.ingame then
+        love.graphics.setBackgroundColor(ScreenFX.bgColor)
+        love.graphics.translate(ScreenFX.coordTranslate[1], ScreenFX.coordTranslate[2])
+        love.graphics.setColor(COLORS.white)
+        love.graphics.print(players[0].score, w / 3, h / 3)
+        love.graphics.print(players[1].score, w / 3 * 2, h / 3)
+        for i=0,1 do
+            players[i]:draw()
+        end
 
-		printCentered("Press ENTER to start the game!", 0, love.graphics.getHeight() / 2, 
-                      love.graphics.getWidth(), love.graphics.getHeight() / 2)
-	end
+        ball:draw()
+    elseif curState == states.title then
+        printCentered("LAZERPONG", 0, 0, w, h)
+        love.graphics.print("Controls:", (22.22 / 100) * w, (26.66 / 100) * h)
+        love.graphics.print("Player 1:", (22.22 / 100) * w, 250)
+        love.graphics.print("Q,S,D: up, down, shoot", (22.22 / 100) * w, (36 / 100) * h)
+        love.graphics.print("G: toggle fullscreen", (22.22 / 100) * w, (42.667 / 100) * h)
+        love.graphics.print("Player 2:", (55.55 / 100) * w, 250)
+        love.graphics.print("P,L,K: up, down, shoot", (55.55 / 100) * w, (36 / 100) * h)
+        love.graphics.print("Spacebar: change song", (66.667 / 100) * w, (42.667 / 100) * h)
+
+        printCentered("Press ENTER to start the game!", 0, h / 2, w, h / 2)
+    end
 end

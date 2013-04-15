@@ -22,30 +22,30 @@ SFX.songList = {SFX.songa, SFX.songb, SFX.songc, SFX.songd}
 SFX.curSong = nil
 
 SFX.playEffect = function(s)
-	s:stop()
-	s:play()
+    s:stop()
+    s:play()
 end
 
 -- makes sure we're only playing one song at a time
 SFX.playSong = function(s)
-	if SFX.curSong ~= s then
-		if SFX.curSong ~= nil then
-			SFX.curSong:stop()
-		end
-		s:play()
-		SFX.curSong = s
-	end
+    if SFX.curSong ~= s then
+        if SFX.curSong ~= nil then
+            SFX.curSong:stop()
+        end
+        s:play()
+        SFX.curSong = s
+    end
 end
 
 function setVolume(v)
-	volume = v
-	love.audio.setVolume(volume)
+    volume = v
+    love.audio.setVolume(volume)
 end
 
 function toggleMute()
-	if love.audio.getVolume() == 0 then
-		love.audio.setVolume(volume)
-	else
-		love.audio.setVolume(0)
-	end
+    if love.audio.getVolume() == 0 then
+        love.audio.setVolume(volume)
+    else
+        love.audio.setVolume(0)
+    end
 end

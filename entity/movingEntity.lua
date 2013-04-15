@@ -60,11 +60,11 @@ end
 local circsCollide = function(entityA, entityB)
     local xa, ya, ra = entityA.x, entityA.y, entityA.radius
     local xb, yb, rb = entityB.x, entityB.y, entityB.radius
-	local dist = math.sqrt(math.pow((xa-xb),2)+math.pow((ya-yb),2))
-	if dist < ra + rb then
-		return true
-	end
-	return false
+    local dist = math.sqrt(math.pow((xa-xb),2)+math.pow((ya-yb),2))
+    if dist < ra + rb then
+        return true
+    end
+    return false
 end
 
 collide = function (entityA, entityB)

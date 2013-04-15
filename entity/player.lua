@@ -4,17 +4,20 @@ require "entity/laser"
 
 Player = class("Player")
 Player.boundingShape = "rect"
-Player.yVel = 500
-Player.width = 12
-Player.height = 100
 
-Player.laserDelay = 0.30
+-- expressed in % for easier reading
+Player.yVel = (66.667 / 100) * love.graphics.getHeight()
+Player.width =  (1.35 / 100) * love.graphics.getWidth()
+Player.height =  (13.35 / 100) * love.graphics.getHeight()
 
 --Width multiplied by this on laser impact
 Player.hitPenalty = 0.7
 
+--minimum interval between laser shots
+Player.laserDelay = 0.30
+
 function Player:new(x, y, teamNum)
-	local me = createMovingEntity(self, x, y)
+    local me = createMovingEntity(self, x, y)
     
     me.team = teamNum
     me.score = 0

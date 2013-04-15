@@ -2,16 +2,20 @@ require "entity/movingEntity"
 
 Ball = class("Ball")
 Ball.boundingShape = "circle"
-Ball.xVel = 400
-Ball.yVel = 200
-Ball.radius = 9
-Ball.waitTime = 2
+
+-- expressed in % for easier reading
+Ball.xVel = (44.44 / 100) * love.graphics.getWidth()
+Ball.yVel = (26.667 / 100) * love.graphics.getHeight()
+Ball.radius = (1 / 100) * love.graphics.getWidth()
 
 Ball.hitVelocityMultInc = 1.35
 Ball.hitVelocityMultDec = 0.9
 
+-- # seconds before ball starts moving after round end/reset
+Ball.waitTime = 2
+
 function Ball:new(x, y)
-	local me = createMovingEntity(self, x, y)
+    local me = createMovingEntity(self, x, y)
 
     me.waiting = Ball.waitTime
     me.alive = true
@@ -51,17 +55,17 @@ function Ball:reset()
     if math.random() < .5 then
         self.yVel = Ball.yVel
     else
-        self.yVel = Ball.yVel*-1
+        self.yVel = Ball.yVel * -1
     end
 
     self.waiting = Ball.waitTime
-    self.x = love.graphics.getWidth()/2
-    self.y = love.graphics.getHeight()/2
+    self.x = love.graphics.getWidth() / 2
+    self.y = love.graphics.getHeight() / 2
 
     if math.random() < .5 then
         self.xVel = Ball.xVel
     else
-        self.xVel = Ball.xVel*-1
+        self.xVel = Ball.xVel * -1
     end
 end
 
