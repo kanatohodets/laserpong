@@ -54,6 +54,13 @@ function love.update(dt)
         ScreenFX.evaluateFX(dt)
         players[0]:update(dt)
         players[1]:update(dt)
+        if love.keyboard.isDown('k') then
+            players[1]:shootLaser()
+        end
+
+        if love.keyboard.isDown('d') then
+            players[0]:shootLaser()
+        end
 
         ball:update(dt)
     end
@@ -87,18 +94,12 @@ function love.keypressed(key, unicode)
         if key == "s" then
             players[0]:moveDown()
         end
-        if key == "d" then
-            players[0]:shootLaser()
-        end
 
         if key == "p" then
             players[1]:moveUp()
         end
         if key == "l" then
             players[1]:moveDown()
-        end
-        if key == "k" then
-            players[1]:shootLaser()
         end
     elseif curState == states.title then
         if key == "enter" or key == "return" then

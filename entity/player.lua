@@ -13,25 +13,44 @@ Player.height =  (13.35 / 100) * love.graphics.getHeight()
 --Width multiplied by this on laser impact
 Player.hitPenalty = 0.7
 
---minimum interval between laser shots
-Player.laserDelay = 0.30
+--max number of lasers in the bank
+Player.laserMax = 10
+
+--# seconds it takes to regenerate one laser shot
+Player.laserRechargeRate = 1
+
+--# seconds to wait before healing after sitting still
+Player.healWait = 2.5
+-- % of original size to gain back 
+Player.healAmount = 0.3
 
 function Player:new(x, y, teamNum)
     local me = createMovingEntity(self, x, y)
     
     me.team = teamNum
     me.score = 0
+
+    me.stationaryTime = 0
+
     me.lasers = {}
+    me.laserReloadTimer = 0
+    me.laserBank = self.laserMax
+
     me.moveQueue = {}
 
-    me.laserCounter = 0
     return me
 end
 
 function Player:draw()
+    local bottom = love.graphics.getHeight()
+    local barWidth = (self.laserBank / self.laserMax) * 100
     if self.team == 0 then
+        love.graphics.setColor(COLORS.gray)
+        love.graphics.rectangle('fill', self.left() + self.width, bottom - 100, barWidth, 25)
         love.graphics.setColor(COLORS.red)
     elseif self.team == 1 then
+        love.graphics.setColor(COLORS.gray)
+        love.graphics.rectangle('fill', self.left() - 100, bottom - 100, barWidth, 25)
         love.graphics.setColor(COLORS.blue)
     end
     love.graphics.rectangle('fill', self.left(), self.top(), self.width, self.height)
@@ -42,7 +61,6 @@ function Player:draw()
 end
 
 function Player:update(dt)
-    self.laserCounter = self.laserCounter + dt
     if self.moveQueue[1] == 1 then
         self.y = self.y + self.yVel * dt
         if self.bottom() > love.graphics.getHeight() then
@@ -53,6 +71,19 @@ function Player:update(dt)
         if self.y < self.height / 2 then
             self.y = self.height / 2
         end
+    end
+
+    if #self.moveQueue == 0 then
+        self.stationaryTime = self.stationaryTime + dt
+        if self.stationaryTime > self.healWait and self.height < Player.height then
+            self.height = self.height + Player.height * Player.healAmount
+            if self.height > Player.height then
+                self.height = Player.height
+            end
+            self.stationaryTime = 0
+        end
+    else
+        self.stationaryTime = 0
     end
 
     if collide(self, ball) then
@@ -75,6 +106,12 @@ function Player:update(dt)
         end
     end
     self.lasers = goodOnes
+
+    self.laserReloadTimer = self.laserReloadTimer + dt
+    if self.laserReloadTimer >= self.laserRechargeRate and self.laserBank < self.laserMax then
+        self.laserBank = self.laserBank + 1
+        self.laserReloadTimer = 0
+    end
 end
 
 function Player:moveUp()
@@ -116,9 +153,9 @@ end
 
 function Player:shootLaser()
     if ball.waiting <= 0 then
-        if (self.laserCounter > self.laserDelay) then
+        if self.laserBank > 0 then
+            self.laserBank = self.laserBank - 1
             SFX.playEffect(SFX.fireLaser)
-            self.laserCounter = 0
             table.insert(self.lasers, Laser:new(self.x, self.y, self))
         end
     end
@@ -127,7 +164,8 @@ end
 function  Player:reset()
     self.y = love.graphics.getHeight()/2
     self.height = Player.height
-    self.laserCounter = 0
     self.lasers = {}
+    self.laserBank = self.laserMax
+    self.laserReloadTimer = 0
 end
 
