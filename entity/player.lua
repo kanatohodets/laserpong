@@ -15,9 +15,10 @@ Player.hitPenalty = 0.7
 
 --max number of lasers in the bank
 Player.laserMax = 10
-
 --# seconds it takes to regenerate one laser shot
 Player.laserRechargeRate = 1
+-- # seconds it takes to wait between laser shots
+Player.laserCooldown = .1
 
 --# seconds to wait before healing after sitting still
 Player.healWait = 2.5
@@ -35,6 +36,7 @@ function Player:new(x, y, teamNum)
     me.lasers = {}
     me.laserReloadTimer = 0
     me.laserBank = self.laserMax
+    me.laserCooldownCounter = Player.laserCooldown
 
     me.moveQueue = {}
 
@@ -105,6 +107,8 @@ function Player:update(dt)
             table.insert(goodOnes,self.lasers[i])
         end
     end
+    
+    self.laserCooldownCounter = self.laserCooldownCounter+dt
     self.lasers = goodOnes
 
     self.laserReloadTimer = self.laserReloadTimer + dt
@@ -153,8 +157,10 @@ end
 
 function Player:shootLaser()
     if ball.waiting <= 0 then
-        if self.laserBank > 0 then
+        if self.laserBank > 0 and self.laserCooldownCounter > Player.laserCooldown then
             self.laserBank = self.laserBank - 1
+            self.laserCooldownCounter = 0
+            self.laserReloadTimer = 0
             SFX.playEffect(SFX.fireLaser)
             table.insert(self.lasers, Laser:new(self.x, self.y, self))
         end

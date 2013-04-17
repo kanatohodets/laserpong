@@ -9,15 +9,7 @@ function createMovingEntity (prototype, x, y)
     newObj.x = x
     newObj.y = y
 
-    local boundingWidthAdjust
-    local boundingHeightAdjust
-
-    if newObj.boundingShape == "rect" then
-        boundingWidthAdjust = newObj.width / 2
-        boundingHeightAdjust = newObj.height / 2
-    elseif newObj.boundingShape == "circle" then
-        boundingWidthAdjust = newObj.radius 
-        boundingHeightAdjust = newObj.radius
+    if newObj.boundingShape == "circle" then
         -- bit hackish: circles get a 'width' and 'height' 
         -- property so they can easily be run through
         -- the 'collideRects' function
@@ -26,15 +18,31 @@ function createMovingEntity (prototype, x, y)
     end
 
     newObj.left = function ()
-        return newObj.x - boundingWidthAdjust
+        return newObj.x - newObj.boundingWidthAdjust()
     end
 
     newObj.top = function ()
-        return newObj.y - boundingHeightAdjust
+        return newObj.y - newObj.boundingHeightAdjust()
     end
     
     newObj.bottom = function ()
-        return newObj.y + boundingHeightAdjust
+        return newObj.y + newObj.boundingHeightAdjust()
+    end
+
+    newObj.boundingHeightAdjust = function ()
+        if newObj.boundingShape == "rect" then
+            return newObj.height / 2
+        elseif newObj.boundingShape == "circle" then
+            return newObj.radius
+        end
+    end
+
+    newObj.boundingWidthAdjust = function ()
+        if newObj.boundingShape == "rect" then
+            return newObj.width / 2
+        elseif newObj.boundingShape == "circle" then
+            return newObj.radius
+        end
     end
 
     return newObj
