@@ -8,6 +8,8 @@ Ball.xVel = (44.44 / 100) * love.graphics.getWidth()
 Ball.yVel = (26.667 / 100) * love.graphics.getHeight()
 Ball.radius = (1 / 100) * love.graphics.getWidth()
 
+Ball.yVelMax = Ball.yVel * 5;
+
 Ball.hitVelocityMultInc = 1.35
 Ball.hitVelocityMultDec = 0.9
 
@@ -28,6 +30,9 @@ function Ball:draw()
 end
 
 function Ball:update(dt)
+    if self.yVel > self.yVelMax then
+        self.yVel = self.yVelMax
+    end
     if self.waiting > 0 then
         self.waiting = self.waiting - dt
     else

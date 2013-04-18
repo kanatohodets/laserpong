@@ -11,21 +11,20 @@ Player.width =  (1.35 / 100) * love.graphics.getWidth()
 Player.height =  (13.35 / 100) * love.graphics.getHeight()
 
 --Width multiplied by this on laser impact
-Player.hitPenalty = 0.7
+Player.hitPenalty = 0.5
 
 --max number of lasers in the bank
-Player.laserMax = 10
---# seconds it takes to regenerate one laser shot
-Player.laserRechargeRate = 1
+Player.laserMax = 8
+
 -- # seconds it takes to wait between laser shots
-Player.laserCooldown = .1
+Player.laserCooldown = .05
 -- # radius of mini lasers displayed next to player
 Player.laserDisplaySpacing = Laser.radius
 
 --# seconds to wait before healing after sitting still
-Player.healWait = 0
+Player.healWait = 1
 -- % of original size to gain back
-Player.healAmount = 0.001
+Player.healAmount = 0.25
 
 function Player:new(x, y, teamNum)
     local me = createMovingEntity(self, x, y)
@@ -120,6 +119,9 @@ function Player:update(dt)
     for i = 1,#self.lasers do
         if self.lasers[i].alive then
             table.insert(goodOnes,self.lasers[i])
+        else
+        -- reload as they go off the screen
+            self.laserBank = self.laserBank + 1
         end
     end
     
@@ -127,10 +129,6 @@ function Player:update(dt)
     self.lasers = goodOnes
 
     self.laserReloadTimer = self.laserReloadTimer + dt
-    if self.laserReloadTimer >= self.laserRechargeRate and self.laserBank < self.laserMax then
-        self.laserBank = self.laserBank + 1
-        self.laserReloadTimer = 0
-    end
 end
 
 function Player:moveUp()
