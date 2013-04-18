@@ -34,6 +34,11 @@ function Laser:update(dt)
         self.x = self.x - self.xVel * dt
     end
 
+    if self.x < -self.radius or self.x > love.graphics.getWidth() + self.radius then
+        self:die()
+        return
+    end
+
     if collide(self, ball) then
         if (self.team == 0 and ball.xVel < 0) or (self.team == 1 and ball.xVel > 0) then
             self:hit(ball)

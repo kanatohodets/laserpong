@@ -19,11 +19,13 @@ Player.laserMax = 10
 Player.laserRechargeRate = 1
 -- # seconds it takes to wait between laser shots
 Player.laserCooldown = .1
+-- # radius of mini lasers displayed next to player
+Player.laserDisplaySpacing = Laser.radius
 
 --# seconds to wait before healing after sitting still
-Player.healWait = 2.5
--- % of original size to gain back 
-Player.healAmount = 0.3
+Player.healWait = 0
+-- % of original size to gain back
+Player.healAmount = 0.001
 
 function Player:new(x, y, teamNum)
     local me = createMovingEntity(self, x, y)
@@ -44,21 +46,34 @@ function Player:new(x, y, teamNum)
 end
 
 function Player:draw()
-    local bottom = love.graphics.getHeight()
-    local barWidth = (self.laserBank / self.laserMax) * 100
     if self.team == 0 then
-        love.graphics.setColor(COLORS.gray)
-        love.graphics.rectangle('fill', self.left() + self.width, bottom - 100, barWidth, 25)
         love.graphics.setColor(COLORS.red)
     elseif self.team == 1 then
-        love.graphics.setColor(COLORS.gray)
-        love.graphics.rectangle('fill', self.left() - 100, bottom - 100, barWidth, 25)
         love.graphics.setColor(COLORS.blue)
     end
     love.graphics.rectangle('fill', self.left(), self.top(), self.width, self.height)
+    self:drawLasers()
 
     for i = 1,#self.lasers do
         self.lasers[i]:draw()
+    end
+end
+
+function Player:drawLasers()
+    local x
+    if self.team == 0 then
+        x = self.left() - self.laserDisplaySpacing - 10
+        love.graphics.setColor({COLORS.red[1]*.5, COLORS.red[2]*.5, COLORS.red[3]*.5})
+    elseif self.team == 1 then
+        x = self.left() + self.width + self.laserDisplaySpacing + 10
+        love.graphics.setColor({COLORS.blue[1]*.5, COLORS.blue[2]*.5, COLORS.blue[3]*.5})
+    end
+    for i=1,self.laserBank do
+        if self.team == 0 then
+            love.graphics.circle('fill', x, self.y - self.laserBank*self.laserDisplaySpacing - self.laserDisplaySpacing + i*self.laserDisplaySpacing*2, self.laserDisplaySpacing)
+        else
+            love.graphics.circle('fill', x, self.y - self.laserBank*self.laserDisplaySpacing - self.laserDisplaySpacing + i*self.laserDisplaySpacing*2, self.laserDisplaySpacing)
+        end
     end
 end
 
