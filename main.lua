@@ -63,6 +63,8 @@ function love.update(dt)
         end
 
         ball:update(dt)
+        Laser.player1HitPS:update(dt)
+        Laser.player2HitPS:update(dt)
     end
 end
 
@@ -140,6 +142,9 @@ function love.draw()
         for i=0,1 do
             players[i]:draw()
         end
+
+        love.graphics.draw(Laser.player1HitPS, 0, 0)
+        love.graphics.draw(Laser.player2HitPS, 0, 0)
 
         ball:draw()
     elseif curState == states.title then

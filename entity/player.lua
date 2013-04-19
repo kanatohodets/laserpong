@@ -162,8 +162,14 @@ function Player:hitByLaser(laser)
         --teamcolor flash
         if (self.team == 0) then
             ScreenFX.startEffect(ScreenFX.redFlash)
+            Laser.player1HitPS:stop()
+            Laser.player1HitPS:setPosition(laser.x, laser.y)
+            Laser.player1HitPS:start()
         else
             ScreenFX.startEffect(ScreenFX.blueFlash)
+            Laser.player2HitPS:stop()
+            Laser.player2HitPS:setPosition(laser.x, laser.y)
+            Laser.player2HitPS:start()
         end
     end
 end
