@@ -110,6 +110,7 @@ function love.keypressed(key, unicode)
             curState = states.ingame
             players[1].AI = true
         elseif key == "8" then
+            curState = states.ingame
             players[1].AI = true
             players[0].AI = true
         end
