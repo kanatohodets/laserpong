@@ -6,7 +6,7 @@ math.random()
 
 COLORS = {gold = {255,215,0}, red = {255,0,0}, black = {0,0,0},
     white = {255,255,255},gray = {100,100,100},grey = {120,100,100},brown={145,100,50},
-    green={0,200,0},yellow={255,255,0},magenta={255,0,160},blue={0,180,255},darkblue={0, 100, 255}}
+    green={0,200,0},yellow={255,255,0},magenta={255,0,160},blue={0,120,255},darkblue={0, 30, 255}}
 
 require "lib/OO"
 require "entity/player"
@@ -129,6 +129,9 @@ end
 
 function love.draw()
     local w, h = love.graphics.getWidth(), love.graphics.getHeight()
+
+    love.graphics.setColor(COLORS.white)
+    love.graphics.rectangle("line",0,0,w,h)
 
     if curState == states.ip then
         love.graphics.print("Enter the host's ip address and press enter (leave blank if you're a server):", 100, 100)

@@ -40,9 +40,31 @@ Laser.player2HitPS:stop()
 
 function Laser:new(x, y, owner)
     local me = createMovingEntity(self, x, y)
-    
 
     me.team = owner.team
+    
+    me.trail = love.graphics.newParticleSystem(Laser.player1HitPSImage, 200)
+    me.trail:setEmissionRate(20)
+    me.trail:setSpeed(100, 200)
+    me.trail:setGravity(0)
+    if me.team == 1 then
+        me.trail:setColors(0, 0, 255, 255, 0, 0, 255, 0)
+        me.trail:setDirection(3.14)
+    else
+        me.trail:setColors(255, 0, 0, 255, 255, 0, 0, 0)
+        me.trail:setDirection(0)
+    end
+    me.trail:setLifetime(-1)
+    me.trail:setParticleLife(1)
+    me.trail:setSpread(3.14/4)
+    me.trail:setRadialAcceleration(200)
+    me.trail:setSpin(0,6)
+    me.trail:setTangentialAcceleration(0)
+    me.trail:setPosition(x,y)
+    me.trail:stop()
+
+    me.trail:start()
+
     me.alive = true
     return me
 end
@@ -53,6 +75,7 @@ function Laser:draw()
     elseif self.team == 1 then
         love.graphics.setColor(COLORS.blue)
     end
+    love.graphics.draw(self.trail,0,0)
     love.graphics.circle("fill", self.x, self.y, self.radius)
 end
 
@@ -99,6 +122,9 @@ function Laser:update(dt)
         self:hit(player2)
         player2:hitByLaser(self)
     end
+
+    self.trail:update(dt)
+    self.trail:setPosition(self.x,self.y)
 end
 
 function Laser:hit(struckEntity)

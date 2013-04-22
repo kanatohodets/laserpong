@@ -58,21 +58,17 @@ function Ball:reset()
     players[0]:reset()
     players[1]:reset()
 
-    if math.random() < .5 then
-        self.yVel = Ball.yVel
-    else
-        self.yVel = Ball.yVel * -1
-    end
-
-    self.waiting = Ball.waitTime
-    self.x = love.graphics.getWidth() / 2
-    self.y = love.graphics.getHeight() / 2
+    self.yVel = (math.random(201)-101)/100 * Ball.yVel
 
     if math.random() < .5 then
         self.xVel = Ball.xVel
     else
         self.xVel = Ball.xVel * -1
     end
+
+    self.waiting = Ball.waitTime
+    self.x = love.graphics.getWidth() / 2
+    self.y = love.graphics.getHeight() / 2
 end
 
 function Ball:hitPlayer(player)
