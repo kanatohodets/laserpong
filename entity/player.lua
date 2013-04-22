@@ -19,18 +19,19 @@ Player.laserMax = 8
 -- # seconds it takes to wait between laser shots
 Player.laserCooldown = .05
 -- # radius of mini lasers displayed next to player
-Player.laserDisplaySpacing = Laser.radius
+Player.laserDisplaySpacing = Laser.radius / 2
 
 --# seconds to wait before healing after sitting still
 Player.healWait = 1
 -- % of original size to gain back
 Player.healAmount = 0.25
 
-function Player:new(x, y, teamNum)
+function Player:new(x, y, teamNum, AI)
     local me = createMovingEntity(self, x, y)
     
     me.team = teamNum
     me.score = 0
+    me.AI = AI
 
     me.stationaryTime = 0
 
@@ -77,6 +78,9 @@ function Player:drawLasers()
 end
 
 function Player:update(dt)
+    if self.AI == true then
+        self:doAI()
+    end
     if self.moveQueue[1] == 1 then
         self.y = self.y + self.yVel * dt
         if self.bottom() > love.graphics.getHeight() then
@@ -186,11 +190,36 @@ function Player:shootLaser()
     end
 end
 
-function  Player:reset()
+function Player:reset()
     self.y = love.graphics.getHeight()/2
     self.height = Player.height
     self.lasers = {}
     self.laserBank = self.laserMax
     self.laserReloadTimer = 0
 end
+
+function Player:doAI()
+    self.moveQueue = {}
+    self:shootLaser()
+    if (self.team == 1 and ball.x > love.graphics.getWidth()/2) or (self.team == 0 and ball.x < love.graphics.getWidth()/2) then
+        if math.abs(ball.y - self.y) > self.height / 2 then
+            if ball.y > self.y then
+                self:moveDown()
+            elseif ball.y < self.y then
+                self:moveUp()
+            end
+        end
+    else
+        -- move towards center
+        if math.abs(self.y - love.graphics.getHeight()/2) > self.height/2 then
+            if self.y > love.graphics.getHeight()/2 then
+                self:moveUp()
+            else
+                self:moveDown()
+            end
+        end
+    end
+end
+
+
 

@@ -106,6 +106,12 @@ function love.keypressed(key, unicode)
     elseif curState == states.title then
         if key == "enter" or key == "return" then
             curState = states.ingame
+        elseif key == "7" then
+            curState = states.ingame
+            players[1].AI = true
+        elseif key == "8" then
+            players[1].AI = true
+            players[0].AI = true
         end
     end
 end
@@ -161,5 +167,6 @@ function love.draw()
         love.graphics.print("Spacebar: change song", (66.667 / 100) * w, (42.667 / 100) * h)
 
         printCentered("Press ENTER to start the game!", 0, h / 2, w, h / 2)
+        printCentered("Press 7 to play the computer!", 0, h/2+20, w, h/2)
     end
 end
