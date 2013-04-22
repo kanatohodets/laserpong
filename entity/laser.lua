@@ -63,14 +63,14 @@ function Laser:update(dt)
     if self.team == 0 then
         self.x = self.x + self.xVel * dt
         --uncomment to enable lasers blocking other lasers
-        --[[
+        
         for i = 1,#player2.lasers do
             if collide(self, player2.lasers[i]) then
                 self:die()
                 player2.lasers[i]:die()
             end
         end
-        ]]--
+        
     elseif self.team == 1 then
         self.x = self.x - self.xVel * dt
     end

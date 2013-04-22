@@ -10,8 +10,9 @@ Ball.radius = (1 / 100) * love.graphics.getWidth()
 
 Ball.yVelMax = Ball.yVel * 5;
 
-Ball.hitVelocityInc = Ball.yVel / 5
-Ball.hitVelocityDec = Ball.yVel / 5
+Ball.hitVelocityIncX = Ball.xVel / 10
+Ball.hitVelocityInc = Ball.yVel / 2
+Ball.hitVelocityDec = Ball.yVel / 2
 
 -- # seconds before ball starts moving after round end/reset
 Ball.waitTime = 2
@@ -88,6 +89,11 @@ function Ball:hitPlayer(player)
             self.yVel = self.yVel + self.hitVelocityDec
         end
     end
+    if self.xVel < 0 then
+        self.xVel = -Ball.xVel
+    else
+        self.xVel = Ball.xVel
+    end
     self.xVel = -1 * self.xVel
 end
 
@@ -97,6 +103,11 @@ function Ball:hitLaser()
         self.yVel = self.yVel + self.hitVelocityInc
     else
         self.yVel = self.yVel - self.hitVelocityInc
+    end
+    if self.xVel < 0 then
+        self.xVel = self.xVel - Ball.hitVelocityIncX
+    else
+        self.xVel = self.xVel + Ball.hitVelocityIncX
     end
 end
 
