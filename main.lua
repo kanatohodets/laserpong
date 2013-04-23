@@ -28,11 +28,44 @@ players = {}
 ball = nil
 starBackground = nil
 
+-- This is Marcus porting and tweaking some sweet GLSL code found here: http://glsl.heroku.com/e#8258.4
+space = love.graphics.newPixelEffect [[
+         extern float time;
+         extern vec4 bgColor;
+         float N = 12;
+         
+         vec4 effect(vec4 color, Image texture, vec2 tc, vec2 pc)
+         {
+            vec2 v = tc;
+    
+            float x = v.x;
+            float y = v.y;
+            
+            float t = time * 0.15;
+            float r;
+            for ( int i = 0; i < N; i++ ){
+                float d = 3.14159265 / float(N) * float(i) * 3.0;
+                r = length(vec2(x,y)) + 0.01;
+                float xx = x;
+                x = x + cos(y +cos(r) + d) + cos(t);
+                y = y - sin(xx+cos(r) + d) + sin(t);
+            }
+            float red = cos(r*sin(time*0.01));
+            red = red*.2;
+            vec4 mbgColor = bgColor/255.0;
+            return vec4( red, red, red, 1.0 ) + mbgColor*mbgColor.a;
+         }
+      ]]
+
+fb = love.graphics.newCanvas()
+
 local states = {
     ip = 1,
     ingame = 2,
     title = 3
 }
+
+t = nil
 
 local curState = states.title
 
@@ -48,6 +81,7 @@ function love.load()
     ball = Ball:new(w / 2, h / 2)
     SFX.playSong(SFX.songList[songIndex])
     starBackground = Stars:new()
+    t = 0
 end
 
 function love.update(dt)
@@ -70,6 +104,10 @@ function love.update(dt)
         Laser.player2HitPS:update(dt)
         starBackground:update(dt)
     end
+    t = t+dt
+    space:send('time', t)
+    local bg = {ScreenFX.bgColor[1], ScreenFX.bgColor[2], ScreenFX.bgColor[3], 255.0}
+    space:send('bgColor', bg)
 end
 
 function love.keypressed(key, unicode)
@@ -140,16 +178,23 @@ end
 
 function love.draw()
     local w, h = love.graphics.getWidth(), love.graphics.getHeight()
-
-    love.graphics.setColor(COLORS.white)
+    love.graphics.setColor(255, 255, 255)
     love.graphics.rectangle("line",0,0,w,h)
-
+    
     if curState == states.ip then
         love.graphics.print("Enter the host's ip address and press enter (leave blank if you're a server):", 100, 100)
         love.graphics.print("IP: "..ipString, 100, 150)
     elseif curState == states.ingame then
-        starBackground:draw()
         love.graphics.setBackgroundColor(ScreenFX.bgColor)
+        fb:clear()
+        love.graphics.setCanvas(fb)
+        love.graphics.setColor(COLORS.white)
+        love.graphics.setCanvas()
+        love.graphics.setPixelEffect(space)
+        love.graphics.draw(fb, 0, 0)
+        love.graphics.setPixelEffect()
+        starBackground:draw()
+        love.graphics.rectangle("line",0,0,w,h)
         love.graphics.translate(ScreenFX.coordTranslate[1], ScreenFX.coordTranslate[2])
         love.graphics.setColor(COLORS.white)
         love.graphics.print(players[0].score, w / 3, h / 3)
