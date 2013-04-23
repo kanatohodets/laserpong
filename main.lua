@@ -14,6 +14,7 @@ require "entity/laser"
 require "entity/ball"
 require "lib/sfx"
 require "lib/screenEffects"
+require "stars"
 
 local font = love.graphics.newFont("lib/Courier New Bold.ttf", 16)
 love.graphics.setFont(font)
@@ -25,6 +26,7 @@ end
 
 players = {}
 ball = nil
+starBackground = nil
 
 local states = {
     ip = 1,
@@ -45,6 +47,7 @@ function love.load()
 
     ball = Ball:new(w / 2, h / 2)
     SFX.playSong(SFX.songList[songIndex])
+    starBackground = Stars:new()
 end
 
 function love.update(dt)
@@ -65,6 +68,7 @@ function love.update(dt)
         ball:update(dt)
         Laser.player1HitPS:update(dt)
         Laser.player2HitPS:update(dt)
+        starBackground:update(dt)
     end
 end
 
@@ -144,6 +148,7 @@ function love.draw()
         love.graphics.print("Enter the host's ip address and press enter (leave blank if you're a server):", 100, 100)
         love.graphics.print("IP: "..ipString, 100, 150)
     elseif curState == states.ingame then
+        starBackground:draw()
         love.graphics.setBackgroundColor(ScreenFX.bgColor)
         love.graphics.translate(ScreenFX.coordTranslate[1], ScreenFX.coordTranslate[2])
         love.graphics.setColor(COLORS.white)
