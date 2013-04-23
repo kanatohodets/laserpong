@@ -106,7 +106,7 @@ function Player:update(dt)
         self.stationaryTime = 0
     end
 
-    if collide(self, ball) then
+    if collide(self, ball) and ((self.team == 0 and ball.x > self.x) or (self.team == 1 and ball.x < self.x)) then
         ball:hitPlayer(self)
         if self.team == 0 then
             ball.x = self.x + ball.radius + self.width
