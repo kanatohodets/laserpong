@@ -27,7 +27,7 @@ end
 
 function Stars:update(dt)
 	local vel = math.abs(Ball.xVel)/2
-	self.angle = (self.angle + .0005)%math.pi
+	self.angle = (self.angle + .05)%(math.pi*2)
 	local yChange = math.sin(self.angle)
 	local xChange = math.cos(self.angle)
 	for i=1,2 do
