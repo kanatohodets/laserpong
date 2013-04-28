@@ -17,10 +17,11 @@ require "lib/screenEffects"
 require "stars"
 
 local font = love.graphics.newFont("lib/Courier New Bold.ttf", 16)
+local fontBIG = love.graphics.newFont("lib/Courier New Bold.ttf", 48)
 love.graphics.setFont(font)
 function printCentered(s, x, y, width, height)
-    local fw = font:getWidth(s)
-    local fh = font:getHeight()
+    local fw = love.graphics.getFont():getWidth(s)
+    local fh = love.graphics.getFont():getHeight()
     love.graphics.print(s, x + width/2 - fw/2, y + height/2 - fh/2)
 end
 
@@ -59,16 +60,40 @@ space = love.graphics.newPixelEffect [[
          }
       ]]
 
-noise = love.graphics.newPixelEffect [[ 
-        extern float time;      
-        float rand(vec2 co)
+rainbow = love.graphics.newPixelEffect [[ 
+        extern float time;
+
+        vec4 hsv_to_rgb(float h, float s, float v, float a)
         {
-            return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453*time);
+            float c = v * s;
+            h = mod((h * 6.0), 6.0);
+            float x = c * (1.0 - abs(mod(h, 2.0) - 1.0));
+            vec4 color;
+         
+            if (0.0 <= h && h < 1.0) {
+                color = vec4(c, x, 0.0, a);
+            } else if (1.0 <= h && h < 2.0) {
+                color = vec4(x, c, 0.0, a);
+            } else if (2.0 <= h && h < 3.0) {
+                color = vec4(0.0, c, x, a);
+            } else if (3.0 <= h && h < 4.0) {
+                color = vec4(0.0, x, c, a);
+            } else if (4.0 <= h && h < 5.0) {
+                color = vec4(x, 0.0, c, a);
+            } else if (5.0 <= h && h < 6.0) {
+                color = vec4(c, 0.0, x, a);
+            } else {
+                color = vec4(0.0, 0.0, 0.0, a);
+            }
+         
+            color.rgb += v - c;
+         
+            return color;
         }
 
         vec4 effect(vec4 color, Image texture, vec2 tc, vec2 pc)
         {
-           return vec4(rand(pc), 1.0, rand(pc), 1.0);
+            return hsv_to_rgb(sin(pc.x*.001 + time)*cos(pc.y*.001+time), 1.0, 1.0, 1.0)*Texel(texture, tc);
         }
     ]]
 
@@ -136,7 +161,7 @@ function love.update(dt)
     end
     t = t+dt
     space:send('time', t)
-    noise:send('time', t)
+    rainbow:send('time', t)
     local bg = {ScreenFX.bgColor[1], ScreenFX.bgColor[2], ScreenFX.bgColor[3], 255.0}
     space:send('bgColor', bg)
 end
@@ -239,11 +264,13 @@ function love.draw()
 
         love.graphics.draw(Laser.player1HitPS, 0, 0)
         love.graphics.draw(Laser.player2HitPS, 0, 0)
-        -- love.graphics.setPixelEffect(noise)
         ball:draw()
-        -- love.graphics.setPixelEffect()
     elseif curState == states.title then
+        love.graphics.setPixelEffect(rainbow)
+        love.graphics.setFont(fontBIG)
         printCentered("LAZERPONG", 0, 0, w, h)
+        love.graphics.setFont(font)
+        love.graphics.setPixelEffect()
         love.graphics.print("Controls:", (22.22 / 100) * w, (26.66 / 100) * h)
         love.graphics.print("Player 1:", (22.22 / 100) * w, 250)
         love.graphics.print("Q,S,D: up, down, shoot", (22.22 / 100) * w, (36 / 100) * h)
@@ -255,7 +282,11 @@ function love.draw()
         printCentered("Press ENTER to start the game!", 0, h / 2, w, h / 2)
         printCentered("Press 7 to play the computer!", 0, h/2+20, w, h/2)
     elseif curState == states.endgame then
-        printCentered("Player "..(winner+1).." is the winner!", 0, -10, w, h)
+        love.graphics.setPixelEffect(rainbow)
+        love.graphics.setFont(fontBIG)
+        printCentered("Player "..(winner+1).." is the winner!", 0, -30, w, h)
+        love.graphics.setFont(font)
+        love.graphics.setPixelEffect()
         printCentered("Player "..((winner - 1) % 2 + 1).." is bad.", 0, 10, w, h)
     end
 end
