@@ -55,6 +55,13 @@ function Ball:update(dt)
 end
 
 function Ball:reset()
+    if players[0].score >= goalScore then
+        curState = states.endgame
+        winner = 0
+    elseif players[1].score >= goalScore then
+        curState = states.endgame
+        winner = 1
+    end
     players[0]:reset()
     players[1]:reset()
 

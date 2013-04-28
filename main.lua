@@ -27,6 +27,8 @@ end
 players = {}
 ball = nil
 starBackground = nil
+winner = 1
+goalScore = 5
 
 -- This is Marcus porting and tweaking some sweet GLSL code found here: http://glsl.heroku.com/e#8258.4
 space = love.graphics.newPixelEffect [[
@@ -57,23 +59,45 @@ space = love.graphics.newPixelEffect [[
          }
       ]]
 
+noise = love.graphics.newPixelEffect [[ 
+        extern float time;      
+        float rand(vec2 co)
+        {
+            return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453*time);
+        }
+
+        vec4 effect(vec4 color, Image texture, vec2 tc, vec2 pc)
+        {
+           return vec4(rand(pc), 1.0, rand(pc), 1.0);
+        }
+    ]]
+
+
 fb = love.graphics.newCanvas()
 
-local states = {
+states = {
     ip = 1,
     ingame = 2,
-    title = 3
+    title = 3,
+    endgame = 4,
 }
+
+endgameCounter = 0
+endgameTime = 3
 
 t = nil
 
-local curState = states.title
+curState = states.title
 
 local ipString = ""
 
 local songIndex = math.random(4)
 
 function love.load()
+    reset()
+end
+
+function reset()
     local w, h = love.graphics.getWidth(), love.graphics.getHeight()
     players[0] = Player:new(50, h / 2, 0)
     players[1] = Player:new(w - 50, h / 2, 1)
@@ -103,9 +127,16 @@ function love.update(dt)
         Laser.player1HitPS:update(dt)
         Laser.player2HitPS:update(dt)
         starBackground:update(dt)
+    elseif curState == states.endgame then
+        endgameCounter = endgameCounter+dt
+        if endgameCounter > endgameTime then
+            curState = states.title
+            endgameCounter = 0
+        end
     end
     t = t+dt
     space:send('time', t)
+    noise:send('time', t)
     local bg = {ScreenFX.bgColor[1], ScreenFX.bgColor[2], ScreenFX.bgColor[3], 255.0}
     space:send('bgColor', bg)
 end
@@ -148,11 +179,14 @@ function love.keypressed(key, unicode)
     elseif curState == states.title then
         if key == "enter" or key == "return" then
             curState = states.ingame
+            reset()
         elseif key == "7" then
             curState = states.ingame
+            reset()
             players[1].AI = true
         elseif key == "8" then
             curState = states.ingame
+            reset()
             players[1].AI = true
             players[0].AI = true
         end
@@ -205,8 +239,9 @@ function love.draw()
 
         love.graphics.draw(Laser.player1HitPS, 0, 0)
         love.graphics.draw(Laser.player2HitPS, 0, 0)
-
+        -- love.graphics.setPixelEffect(noise)
         ball:draw()
+        -- love.graphics.setPixelEffect()
     elseif curState == states.title then
         printCentered("LAZERPONG", 0, 0, w, h)
         love.graphics.print("Controls:", (22.22 / 100) * w, (26.66 / 100) * h)
@@ -219,5 +254,8 @@ function love.draw()
 
         printCentered("Press ENTER to start the game!", 0, h / 2, w, h / 2)
         printCentered("Press 7 to play the computer!", 0, h/2+20, w, h/2)
+    elseif curState == states.endgame then
+        printCentered("Player "..(winner+1).." is the winner!", 0, -10, w, h)
+        printCentered("Player "..((winner - 1) % 2 + 1).." is bad.", 0, 10, w, h)
     end
 end
