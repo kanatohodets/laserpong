@@ -16,6 +16,7 @@ require "entity/ball"
 require "lib/sfx"
 require "lib/screenEffects"
 require "stars"
+require "achievements"
 
 local font = love.graphics.newFont("lib/Courier New Bold.ttf", 16)
 local fontBIG = love.graphics.newFont("lib/Courier New Bold.ttf", 48)
@@ -138,6 +139,7 @@ function love.update(dt)
     if curState == states.ip then
         -- networking screen
     elseif curState == states.ingame and love.graphics.hasFocus() then
+        achievements:logStat("Time Passed",dt)
         ScreenFX.evaluateFX(dt)
         players[0]:update(dt)
         players[1]:update(dt)
@@ -166,6 +168,10 @@ function love.update(dt)
     rainbow:send('time', t)
     local bg = {ScreenFX.bgColor[1], ScreenFX.bgColor[2], ScreenFX.bgColor[3], 255.0}
     space:send('bgColor', bg)
+
+    for i,v in ipairs(achievements:getAchieved()) do
+        print(v.name)
+    end
 end
 
 function love.keypressed(key, unicode)

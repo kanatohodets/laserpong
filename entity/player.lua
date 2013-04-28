@@ -108,6 +108,7 @@ function Player:update(dt)
     end
 
     if collide(self, ball) and ((self.team == 0 and ball.x > self.x) or (self.team == 1 and ball.x < self.x)) then
+        achievements:logStat("Ball Hit Player",self.team)
         ball:hitPlayer(self)
         if self.team == 0 then
             ball.x = self.x + ball.radius + self.width
@@ -184,6 +185,7 @@ end
 function Player:shootLaser()
     if ball.waiting <= 0 then
         if self.laserBank > 0 and self.laserCooldownCounter > Player.laserCooldown then
+            achievements:logStat("Laser Shot",self.team)
             self.laserBank = self.laserBank - 1
             self.laserCooldownCounter = 0
             self.laserReloadTimer = 0
