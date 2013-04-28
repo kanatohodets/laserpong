@@ -9,6 +9,7 @@ COLORS = {gold = {255,215,0}, red = {255,0,0}, black = {0,0,0},
     green={0,200,0},yellow={255,255,0},magenta={255,0,160},blue={0,120,255},darkblue={0, 30, 255}}
 
 require "lib/OO"
+require "lib/announcement"
 require "entity/player"
 require "entity/laser"
 require "entity/ball"
@@ -152,6 +153,7 @@ function love.update(dt)
         Laser.player1HitPS:update(dt)
         Laser.player2HitPS:update(dt)
         starBackground:update(dt)
+        updateAnnouncement(dt)
     elseif curState == states.endgame then
         endgameCounter = endgameCounter+dt
         if endgameCounter > endgameTime then
@@ -170,11 +172,6 @@ function love.keypressed(key, unicode)
     if key == "escape" then
         love.event.push("quit")
     end
-
-    if key == "g" then
-        love.graphics.toggleFullscreen()
-    end
-
     if key == " " then
         songIndex = songIndex + 1
         SFX.playSong(SFX.songList[songIndex % 4 + 1])
@@ -188,7 +185,7 @@ function love.keypressed(key, unicode)
             ipString = ipString .. key
         end
     elseif curState == states.ingame then
-        if key == "q" then
+       if key == "q" then
             players[0]:moveUp()
         end
         if key == "s" then
@@ -202,6 +199,10 @@ function love.keypressed(key, unicode)
             players[1]:moveDown()
         end
     elseif curState == states.title then
+        if key == "g" then
+            love.graphics.toggleFullscreen()
+        end
+
         if key == "enter" or key == "return" then
             curState = states.ingame
             reset()
@@ -265,6 +266,7 @@ function love.draw()
         love.graphics.draw(Laser.player1HitPS, 0, 0)
         love.graphics.draw(Laser.player2HitPS, 0, 0)
         ball:draw()
+        displayAnnouncement()
     elseif curState == states.title then
         love.graphics.setPixelEffect(rainbow)
         love.graphics.setFont(fontBIG)
