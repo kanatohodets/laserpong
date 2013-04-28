@@ -9,8 +9,9 @@ Player.boundingShape = "rect"
 Player.yVel = (66.667 / 100) * love.graphics.getHeight()
 Player.width =  (1.35 / 100) * love.graphics.getWidth()
 Player.height =  (13.35 / 100) * love.graphics.getHeight()
+Player.minHeight = (2 / 100) * love.graphics.getHeight()
 
---Width multiplied by this on laser impact
+--Height multiplied by this on laser impact
 Player.hitPenalty = 0.5
 
 --max number of lasers in the bank
@@ -158,7 +159,9 @@ end
 
 function Player:hitByLaser(laser)
     if (laser.team ~= self.team) then
-        self.height = self.height * self.hitPenalty
+        if self.height > self.minHeight then
+            self.height = self.height * self.hitPenalty
+        end
 
         SFX.playEffect(SFX.hitByLaser)
         ScreenFX.startEffect(ScreenFX.smallShake)
