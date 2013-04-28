@@ -170,7 +170,7 @@ function love.update(dt)
     space:send('bgColor', bg)
 
     for i,v in ipairs(achievements:getAchieved()) do
-        print(v.name)
+        addAnnouncement(v.name,v.player)
     end
 end
 
