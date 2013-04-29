@@ -105,9 +105,9 @@ function Laser:update(dt)
 
     if collide(self, ball) then
         if (self.team == 0 and ball.xVel < 0) or (self.team == 1 and ball.xVel > 0) then
-            achievements:logStat("Ball Hit Laser",self.team)
             self:hit(ball)
             ball:hitLaser(self)
+            achievements:logStat("Ball Hit Laser",self.team)
             SFX.playEffect(SFX.laserHitBall)
             ScreenFX.startEffect(ScreenFX.smallShake)
             ScreenFX.startEffect(ScreenFX.greenFlash)
