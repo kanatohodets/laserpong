@@ -1,7 +1,7 @@
 achievements = {Slingshot,Dunked,Disciplined,Sniper,Relentless,PaddleControl,
 				AbsentMinded,RapidFire,Regenerator,ZenMaster,Skunked,Changeup}
 
-achievements.Slingshot = {name = "WHIPLASH",hits = 0, targetHits = 4, delay = 0.3, cooldown = 0}
+achievements.Slingshot = {name = "WHIPLASH",hits = 0, targetHits = 4, delay = 0.3, cooldown = 0, lastHit = 0}
 achievements.Dunked = {name = "DUNKED",hitPlayer = nil, hitLaser = nil, lost = nil,delay = 0.5,cooldown = 0}
 achievements.Disciplined = {name = "DISCIPLINED",time = 6,counter = {0,0}}
 achievements.Sniper = {name = "SNIPER",sniped = nil}
@@ -51,6 +51,7 @@ function achievements:logStat(stat, value)
 			self.Slingshot.hits = 1
 		else
 			self.Slingshot.hits = self.Slingshot.hits + 1
+			if ball.xVel > 0 then self.Slingshot.lastHit = 0 else self.Slingshot.lastHit = 1 end
 		end
 		self.Slingshot.cooldown = 0
 
@@ -129,8 +130,8 @@ end
 
 function achievements:getAchieved()
 	achieved = {}
-	if self.Slingshot.hits >= self.Slingshot.targetHits then
-		table.insert(achieved,{name = self.Slingshot.name, player = 1})
+	if self.Slingshot.hits >= self.Slingshot.targetHits and self.Slingshot.cooldown > self.Slingshot.delay then
+		table.insert(achieved,{name = self.Slingshot.name, player = self.Slingshot.lastHit})
 		self.Slingshot.hits = 0
 		self.Slingshot.cooldown = 0
 	end
