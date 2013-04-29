@@ -22,15 +22,16 @@ function displayAnnouncement ()
         local ann = announcementQueue[#announcementQueue]
         local scalar = ann.life / duration
         local w = love.graphics.getWidth()
+        local h = love.graphics.getHeight()
         local scalar = (44/100) * w
-        local xTrans = scalar * math.sin(math.pi * ann.life) - scalar
+        local xTrans = math.min(scalar * math.sin(math.pi * ann.life) - scalar/2, 0)
         if ann.player == 0 then
             love.graphics.translate(xTrans, 0)
-            printCentered(ann.text, 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
+            printCentered(ann.text, 0, 2*(h/3), w, h/3)
             love.graphics.translate(0, 0)
         elseif ann.player == 1 then
             love.graphics.translate(-xTrans, 0)
-            printCentered(ann.text, 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
+            printCentered(ann.text, 0, 2*(h/3), w, h/3)
             love.graphics.translate(0, 0)
         else
             -- not a player announcement
