@@ -1,9 +1,9 @@
 achievements = {Slingshot,Dunked,Disciplined,Sniper,Relentless,PaddleControl,
 				AbsentMinded,Negator,RapidFire,Regenerator,ZenMaster}
 
-achievements.Slingshot = {name = "Slingshot",hits = 0, targetHits = 8, delay = 0.3, cooldown = 0}
+achievements.Slingshot = {name = "Slingshot",hits = 0, targetHits = 4, delay = 0.3, cooldown = 0}
 achievements.Dunked = {name = "Dunked",hitPlayer = nil, hitLaser = nil, lost = nil,delay = 0.5,cooldown = 0}
-achievements.Disciplined = {name = "Disciplined",time = 10,counter = {0,0}}
+achievements.Disciplined = {name = "Disciplined",time = 6,counter = {0,0}}
 achievements.Sniper = {name = "Sniper",sniped = nil}
 
 function achievements:logStat(stat, value)
@@ -43,8 +43,8 @@ function achievements:logStat(stat, value)
 		end
 
 		-- Sniper
-		if players[value].laserBank == players[value].laserMax - 1 and math.abs(ball.x-players[value].x) > love.graphics.getWidth()/4 then
-			sniped = value
+		if players[value].laserBank == players[value].laserMax - 1 and math.abs(ball.x-players[value].x) > love.graphics.getWidth()/2 then
+			self.Sniper.sniped = value
 		end
 
 	elseif stat == "Ball Hit Player" then
@@ -97,6 +97,7 @@ function achievements:getAchieved()
 	end
 	if self.Sniper.sniped ~= nil then
 		table.insert(achieved,{name = self.Sniper.name,player = self.Sniper.sniped})
+		self.Sniper.sniped = nil
 	end
 	return achieved
 end
