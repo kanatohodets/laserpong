@@ -36,11 +36,11 @@ function displayAnnouncement ()
         if ann.player == 0 then
             love.graphics.translate(xTrans, 0)
             printCentered(ann.text, 0, 2*(h/3), w, h/3)
-            love.graphics.translate(0, 0)
+            love.graphics.translate(-xTrans, 0)
         elseif ann.player == 1 then
             love.graphics.translate(-xTrans, 0)
             printCentered(ann.text, 0, 2*(h/3), w, h/3)
-            love.graphics.translate(0, 0)
+            love.graphics.translate(xTrans, 0)
         else
             -- not a player announcement
         end

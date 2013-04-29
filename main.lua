@@ -18,7 +18,7 @@ require "lib/screenEffects"
 require "lib/stars"
 require "lib/achievements"
 
-font = love.graphics.newFont("lib/Courier New Bold.ttf", 16)
+font = love.graphics.newFont("lib/Courier New Bold.ttf", 20)
 fontBIG = love.graphics.newFont("lib/Courier New Bold.ttf", 48)
 love.graphics.setFont(font)
 function printCentered(s, x, y, width, height)
@@ -114,8 +114,18 @@ announcementShader = love.graphics.newPixelEffect [[
         }
     ]]
 
+invertShader = love.graphics.newPixelEffect [[
+        extern float time;
+
+        vec4 effect(vec4 color, Image texture, vec2 tc, vec2 pc)
+        {
+            vec4 col = Texel(texture, tc);
+            return vec4(1.0-col.x, 1.0-col.y, 1.0-col.z, 1.0);
+        }
+    ]]
 
 fb = love.graphics.newCanvas()
+fb2 = love.graphics.newCanvas()
 
 states = {
     ip = 1,
@@ -259,6 +269,8 @@ function love.keyreleased(key)
 end
 
 function love.draw()
+    fb2:clear()
+    love.graphics.setCanvas(fb2)
     local w, h = love.graphics.getWidth(), love.graphics.getHeight()
     love.graphics.setColor(255, 255, 255)
     love.graphics.rectangle("line",0,0,w,h)
@@ -271,7 +283,7 @@ function love.draw()
         fb:clear()
         love.graphics.setCanvas(fb)
         love.graphics.setColor(COLORS.white)
-        love.graphics.setCanvas()
+        love.graphics.setCanvas(fb2)
         love.graphics.setPixelEffect(space)
         love.graphics.draw(fb, 0, 0)
         love.graphics.setPixelEffect()
@@ -289,10 +301,13 @@ function love.draw()
         love.graphics.draw(Laser.player2HitPS, 0, 0)
         ball:draw()
         displayAnnouncement()
+        if players[0].score == goalScore-1 or players[1].score == goalScore-1 then
+            love.graphics.setPixelEffect(invertShader)
+        end
     elseif curState == states.title then
         love.graphics.setPixelEffect(rainbow)
         love.graphics.setFont(fontBIG)
-        printCentered("LAZERPONG", 0, 0, w, h)
+        printCentered("LAZERPONG", 0, 40, w, h)
         love.graphics.setFont(font)
         love.graphics.setPixelEffect()
         love.graphics.print("Controls:", (22.22 / 100) * w, (26.66 / 100) * h)
@@ -313,4 +328,7 @@ function love.draw()
         love.graphics.setPixelEffect()
         printCentered("Player "..((winner - 1) % 2 + 1).." is bad.", 0, 10, w, h)
     end
+    love.graphics.setCanvas()
+    love.graphics.draw(fb2, 0, 0)
+    love.graphics.setPixelEffect()
 end
