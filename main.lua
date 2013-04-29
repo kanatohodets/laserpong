@@ -15,8 +15,8 @@ require "entity/laser"
 require "entity/ball"
 require "lib/sfx"
 require "lib/screenEffects"
-require "stars"
-require "achievements"
+require "lib/stars"
+require "lib/achievements"
 
 local font = love.graphics.newFont("lib/Courier New Bold.ttf", 16)
 local fontBIG = love.graphics.newFont("lib/Courier New Bold.ttf", 48)
@@ -130,7 +130,7 @@ function reset()
     players[1] = Player:new(w - 50, h / 2, 1)
 
     ball = Ball:new(w / 2, h / 2)
-    SFX.playSong(SFX.songList[songIndex])
+    SFX.playSong(songIndex)
     starBackground = Stars:new()
     t = 0
 end
@@ -180,7 +180,7 @@ function love.keypressed(key, unicode)
     end
     if key == " " then
         songIndex = songIndex + 1
-        SFX.playSong(SFX.songList[songIndex % 4 + 1])
+        SFX.playSong(songIndex)
     end
     if curState == states.ip then
         if key == "enter" or key == "return" then

@@ -6,7 +6,7 @@ Laser.boundingShape = "circle"
 -- expressed in % for easier reading
 Laser.xVel = (55.55 / 100) * love.graphics.getWidth()
 Laser.radius = (1.11 / 100) * love.graphics.getWidth()
-Laser.player1HitPSImage = love.graphics.newImage("particle.png");
+Laser.player1HitPSImage = love.graphics.newImage("gfx/particle.png");
 
 -- define particle system for player 1 getting hit
 Laser.player1HitPS = love.graphics.newParticleSystem(Laser.player1HitPSImage, 200)

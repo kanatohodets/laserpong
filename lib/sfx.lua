@@ -27,7 +27,10 @@ SFX.playEffect = function(s)
 end
 
 -- makes sure we're only playing one song at a time
-SFX.playSong = function(s)
+SFX.playSong = function(songNum)
+    local index = songNum % #SFX.songList
+    index = index + 1 --index from 1
+    local s = SFX.songList[index]
     if SFX.curSong ~= s then
         if SFX.curSong ~= nil then
             SFX.curSong:stop()
