@@ -1,13 +1,17 @@
 achievements = {Slingshot,Dunked,Disciplined,Sniper,Relentless,PaddleControl,
-				AbsentMinded,Negator,RapidFire,Regenerator,ZenMaster}
+				AbsentMinded,RapidFire,Regenerator,ZenMaster,Skunked,Changeup}
 
-achievements.Slingshot = {name = "Slingshot",hits = 0, targetHits = 4, delay = 0.3, cooldown = 0}
-achievements.Dunked = {name = "Dunked",hitPlayer = nil, hitLaser = nil, lost = nil,delay = 0.5,cooldown = 0}
-achievements.Disciplined = {name = "Disciplined",time = 6,counter = {0,0}}
-achievements.Sniper = {name = "Sniper",sniped = nil}
+achievements.Slingshot = {name = "WHIPLASH",hits = 0, targetHits = 4, delay = 0.3, cooldown = 0}
+achievements.Dunked = {name = "DUNKED",hitPlayer = nil, hitLaser = nil, lost = nil,delay = 0.5,cooldown = 0}
+achievements.Disciplined = {name = "DISCIPLINED",time = 6,counter = {0,0}}
+achievements.Sniper = {name = "SNIPER",sniped = nil}
+achievements.Relentless = {name = "RELENTLESS",hit = nil,regen = true}
+achievements.PaddleControl = {name = "PADDLE CONTROL",hit = nil}
+achievements.AbsentMinded = {name = "ABSENT MINDED", initial = true, lost = nil}
+achievements.RapidFire = {name = "RAPID FIRE",target = 4,counter = {0,0}}
 
 function achievements:logStat(stat, value)
-	if stat == "Time Passed" then
+	if stat == "Time Passed" then -- value == dt
 
 		-- Slingshot
 		self.Slingshot.cooldown = self.Slingshot.cooldown + value
@@ -26,7 +30,21 @@ function achievements:logStat(stat, value)
 			self.Disciplined.counter[2] = self.Disciplined.counter[2] + value
 		end
 
-	elseif stat == "Ball Hit Laser" then
+		-- Rapid Fire
+		if ball.waiting <= 0 then
+			if love.keyboard.isDown('k') then
+				self.RapidFire.counter[2] = self.RapidFire.counter[2] + value
+			else
+				self.RapidFire.counter[2] = 0
+			end
+			if love.keyboard.isDown('d') then
+				self.RapidFire.counter[1] = self.RapidFire.counter[1] + value
+			else
+				self.RapidFire.counter[1] = 0
+			end
+		end
+
+	elseif stat == "Ball Hit Laser" then -- value == team of laser
 
 		-- Slingshot
 		if self.Slingshot.cooldown > self.Slingshot.delay then
@@ -43,23 +61,45 @@ function achievements:logStat(stat, value)
 		end
 
 		-- Sniper
-		if players[value].laserBank == players[value].laserMax - 1 and math.abs(ball.x-players[value].x) > love.graphics.getWidth()/2 then
+		if players[value].laserBank == players[value].laserMax - 1 and math.abs(ball.x-players[value].x) > love.graphics.getWidth()/3 then
 			self.Sniper.sniped = value
 		end
 
-	elseif stat == "Ball Hit Player" then
+	elseif stat == "Ball Hit Player" then -- value == team of player
 
 		-- Dunked
 		self.Dunked.hitPlayer = value
 		self.Dunked.hitLaser = nil
 		self.Dunked.cooldown = 0
 
-	elseif stat == "Laser Shot" then
+		-- Paddle Control
+		if players[value].height <= Player.minHeight then
+			self.PaddleControl.hit = value
+		end
+
+		-- Absent Minded
+		self.AbsentMinded.initial = false
+
+	elseif stat == "Laser Hit Player" then -- value == team of laser	
+
+		-- Relentless
+		if players[(value+1)%2].height <= Player.minHeight and self.Relentless.regen then
+			self.Relentless.hit = value
+			self.Relentless.regen = false
+		end
+
+	elseif stat == "Laser Shot" then -- value == team of laser
 
 		-- Disciplined
 		self.Disciplined.counter[value+1] = 0
 
-	elseif stat == "Game Over" then
+	elseif stat == "Regen" then -- value == team of player regenerating
+
+		-- Relentless
+		self.Relentless.regen = true
+
+
+	elseif stat == "Game Over" then -- value == winning team
 
 		-- Dunked
 		if self.Dunked.hitLaser ~= nil then
@@ -67,8 +107,22 @@ function achievements:logStat(stat, value)
 			cooldown = 0
 		end
 
+		-- Disciplined
 		self.Disciplined.counter[1] = 0
 		self.Disciplined.counter[2] = 0
+
+		-- Relentless
+		self.Relentless.regen = true
+
+		-- Absent Minded
+		if self.AbsentMinded.initial then
+			self.AbsentMinded.lost = (value+1)%2
+		end
+		self.AbsentMinded.initial = true
+
+		-- Rapid Fire
+		self.RapidFire.counter[1] = 0
+		self.RapidFire.counter[2] = 0
 
 	end
 end
@@ -81,7 +135,7 @@ function achievements:getAchieved()
 		self.Slingshot.cooldown = 0
 	end
 	if self.Dunked.lost ~= nil and self.Dunked.hitPlayer ~= self.Dunked.hitLaser and self.Dunked.hitLaser == self.Dunked.lost then
-		table.insert(achieved,{name = self.Dunked.name, player = self.Dunked.hitLaser})
+		table.insert(achieved,{name = self.Dunked.name, player = self.Dunked.hitPlayer})
 		self.Dunked.hitPlayer = nil
 		self.Dunked.hitLaser = nil
 		self.Dunked.lost = nil
@@ -98,6 +152,26 @@ function achievements:getAchieved()
 	if self.Sniper.sniped ~= nil then
 		table.insert(achieved,{name = self.Sniper.name,player = self.Sniper.sniped})
 		self.Sniper.sniped = nil
+	end
+	if self.Relentless.hit ~= nil then
+		table.insert(achieved,{name = self.Relentless.name,player = self.Relentless.hit})
+		self.Relentless.hit = nil
+	end
+	if self.PaddleControl.hit ~= nil then
+		table.insert(achieved,{name = self.PaddleControl.name,player = self.PaddleControl.hit})
+		self.PaddleControl.hit = nil
+	end
+	if self.AbsentMinded.lost ~= nil then
+		table.insert(achieved,{name = self.AbsentMinded.name,player = self.AbsentMinded.lost})
+		self.AbsentMinded.lost = nil
+	end
+	if self.RapidFire.counter[1] > self.RapidFire.target then
+		table.insert(achieved,{name = self.RapidFire.name, player = 0})
+		self.RapidFire.counter[1] = 0
+	end
+	if self.RapidFire.counter[2] > self.RapidFire.target then
+		table.insert(achieved,{name = self.RapidFire.name, player = 1})
+		self.RapidFire.counter[2] = 0
 	end
 	return achieved
 end

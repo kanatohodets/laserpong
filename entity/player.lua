@@ -97,6 +97,7 @@ function Player:update(dt)
     if #self.moveQueue == 0 then
         self.stationaryTime = self.stationaryTime + dt
         if self.stationaryTime > self.healWait and self.height < Player.height then
+            achievements:logStat("Regen",self.team)
             self.height = self.height + Player.height * Player.healAmount
             if self.height > Player.height then
                 self.height = Player.height
@@ -160,6 +161,7 @@ end
 
 function Player:hitByLaser(laser)
     if (laser.team ~= self.team) then
+        achievements:logStat("Laser Hit Player",laser.team)
         if self.height > self.minHeight then
             self.height = self.height * self.hitPenalty
         end
