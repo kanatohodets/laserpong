@@ -18,8 +18,8 @@ require "lib/screenEffects"
 require "lib/stars"
 require "lib/achievements"
 
-local font = love.graphics.newFont("lib/Courier New Bold.ttf", 16)
-local fontBIG = love.graphics.newFont("lib/Courier New Bold.ttf", 48)
+font = love.graphics.newFont("lib/Courier New Bold.ttf", 16)
+fontBIG = love.graphics.newFont("lib/Courier New Bold.ttf", 48)
 love.graphics.setFont(font)
 function printCentered(s, x, y, width, height)
     local fw = love.graphics.getFont():getWidth(s)
@@ -99,6 +99,21 @@ rainbow = love.graphics.newPixelEffect [[
         }
     ]]
 
+announcementShader = love.graphics.newPixelEffect [[ 
+        extern float time;
+        extern number player;
+
+        vec4 effect(vec4 color, Image texture, vec2 tc, vec2 pc)
+        {
+            float a = sin(time*50)/2.0 + 0.5;
+            if (player == 0) {
+                return vec4(1.0, a, a, 1.0)*Texel(texture, tc);
+            } else {
+                return vec4(a, a, 1.0, 1.0)*Texel(texture, tc);
+            }
+        }
+    ]]
+
 
 fb = love.graphics.newCanvas()
 
@@ -133,6 +148,7 @@ function reset()
     SFX.playSong(songIndex)
     starBackground = Stars:new()
     t = 0
+    resetAnnouncements()
 end
 
 function love.update(dt)
