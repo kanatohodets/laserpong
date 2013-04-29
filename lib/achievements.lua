@@ -66,6 +66,9 @@ function achievements:logStat(stat, value)
 			self.Sniper.sniped = value
 		end
 
+		-- Absent Minded
+		self.AbsentMinded.initial = false
+
 	elseif stat == "Ball Hit Player" then -- value == team of player
 
 		-- Dunked
