@@ -7,7 +7,7 @@ achievements.Disciplined = {name = "DISCIPLINED",time = 6,counter = {0,0}}
 achievements.Sniper = {name = "SNIPER",sniped = nil}
 achievements.Relentless = {name = "RELENTLESS",hit = nil,regen = true}
 achievements.PaddleControl = {name = "PADDLE CONTROL",hit = nil}
-achievements.AbsentMinded = {name = "ABSENT MINDED", initial = true, lost = nil}
+achievements.AbsentMinded = {name = "ABSENT-MINDED", initial = true, lost = nil}
 achievements.RapidFire = {name = "RAPID FIRE",target = 4,counter = {0,0}}
 
 function achievements:logStat(stat, value)
