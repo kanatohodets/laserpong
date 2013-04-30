@@ -8,7 +8,7 @@ achievements.Sniper = {name = "SNIPER",sniped = nil}
 achievements.Relentless = {name = "RELENTLESS",hit = nil,regen = true}
 achievements.PaddleControl = {name = "PADDLE CONTROL",hit = nil}
 achievements.AbsentMinded = {name = "ABSENT-MINDED", initial = true, lost = nil}
-achievements.RapidFire = {name = "RAPID FIRE",target = 4,counter = {0,0}}
+achievements.RapidFire = {name = "RAPID FIRE",target = Player.laserMax * 3,limit = 3,timer = {0,0},roundsFired = {0,0}}
 
 function achievements:logStat(stat, value)
     if stat == "Time Passed" then -- value == dt
@@ -31,17 +31,15 @@ function achievements:logStat(stat, value)
         end
 
         -- Rapid Fire
-        if ball.waiting <= 0 then
-            if love.keyboard.isDown('k') then
-                self.RapidFire.counter[2] = self.RapidFire.counter[2] + value
-            else
-                self.RapidFire.counter[2] = 0
-            end
-            if love.keyboard.isDown('d') then
-                self.RapidFire.counter[1] = self.RapidFire.counter[1] + value
-            else
-                self.RapidFire.counter[1] = 0
-            end
+        if self.RapidFire.timer[1] > self.RapidFire.limit then
+        	self.RapidFire.roundsFired[1] = 0
+        else
+        	self.RapidFire.timer[1] = self.RapidFire.timer[1] + value
+        end
+        if self.RapidFire.timer[2] > self.RapidFire.limit then
+        	self.RapidFire.roundsFired[2] = 0
+        else
+        	self.RapidFire.timer[2] = self.RapidFire.timer[2] + value
         end
 
     elseif stat == "Ball Hit Laser" then -- value == team of laser
@@ -97,6 +95,12 @@ function achievements:logStat(stat, value)
         -- Disciplined
         self.Disciplined.counter[value+1] = 0
 
+        -- Rapid Fire
+        if players[value].laserBank == 1 then
+        	self.RapidFire.timer[value+1] = 0
+        	self.RapidFire.roundsFired[value+1] = self.RapidFire.roundsFired[value+1] + 1
+        end
+
     elseif stat == "Regen" then -- value == team of player regenerating
 
         -- Relentless
@@ -125,8 +129,8 @@ function achievements:logStat(stat, value)
         self.AbsentMinded.initial = true
 
         -- Rapid Fire
-        self.RapidFire.counter[1] = 0
-        self.RapidFire.counter[2] = 0
+        self.RapidFire.roundsFired[1] = 0
+        self.RapidFire.roundsFired[2] = 0
 
     end
 end
@@ -169,13 +173,13 @@ function achievements:getAchieved()
         table.insert(achieved,{name = self.AbsentMinded.name,player = self.AbsentMinded.lost})
         self.AbsentMinded.lost = nil
     end
-    if self.RapidFire.counter[1] > self.RapidFire.target then
+    if self.RapidFire.roundsFired[1] > self.RapidFire.target then
         table.insert(achieved,{name = self.RapidFire.name, player = 0})
-        self.RapidFire.counter[1] = 0
+        self.RapidFire.roundsFired[1] = 0
     end
-    if self.RapidFire.counter[2] > self.RapidFire.target then
+    if self.RapidFire.roundsFired[2] > self.RapidFire.target then
         table.insert(achieved,{name = self.RapidFire.name, player = 1})
-        self.RapidFire.counter[2] = 0
+        self.RapidFire.roundsFired[2] = 0
     end
     return achieved
 end
