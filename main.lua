@@ -28,7 +28,8 @@ players = {}
 ball = nil
 starBackground = nil
 winner = 1
-goalScore = 5
+goalScore = 11
+finishThem = false
 
 fb = love.graphics.newCanvas()
 fb2 = love.graphics.newCanvas()
@@ -46,8 +47,6 @@ endgameTime = 3
 t = nil
 
 curState = states.title
-
-local ipString = ""
 
 local songIndex = math.random(4)
 
@@ -207,7 +206,7 @@ function love.draw()
         love.graphics.draw(Laser.player2HitPS, 0, 0)
         ball:draw()
         displayAnnouncement()
-        if players[0].score == goalScore-1 or players[1].score == goalScore-1 then
+        if finishThem then
             love.graphics.setPixelEffect(invertShader)
         end
     elseif curState == states.title then
