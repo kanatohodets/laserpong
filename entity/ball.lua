@@ -17,6 +17,24 @@ Ball.hitVelocityDec = Ball.yVel / 2
 -- # seconds before ball starts moving after round end/reset
 Ball.waitTime = 2
 
+Ball.scoreParticle = love.graphics.newImage("gfx/particle.png");
+
+-- define particle system for player 1 scoring
+Ball.scorePS = love.graphics.newParticleSystem(Ball.scoreParticle, 300)
+Ball.scorePS:setEmissionRate(3000)
+Ball.scorePS:setSpeed(0, 800)
+Ball.scorePS:setGravity(0)
+Ball.scorePS:setColors(0, 255, 0, 255, 0, 255, 0, 0)
+Ball.scorePS:setLifetime(.1)
+Ball.scorePS:setParticleLife(.8)
+Ball.scorePS:setDirection(0)
+Ball.scorePS:setSpread(math.pi)
+Ball.scorePS:setRadialAcceleration(0)
+Ball.scorePS:setSpin(0,4*math.pi)
+Ball.scorePS:setTangentialAcceleration(0)
+Ball.scorePS:setSizes(2, 0)
+Ball.scorePS:stop()
+
 function Ball:new(x, y)
     local me = createMovingEntity(self, x, y)
 
@@ -28,6 +46,8 @@ end
 function Ball:draw()
     love.graphics.setColor(COLORS.white)
     love.graphics.circle("fill", self.x, self.y, self.radius)
+
+    love.graphics.draw(self.scorePS, 0, 0)
 end
 
 function Ball:update(dt)
@@ -36,6 +56,7 @@ function Ball:update(dt)
     end
     if self.waiting > 0 then
         self.waiting = self.waiting - dt
+        self.scorePS:update(dt)
     else
         self.x = self.x + self.xVel * dt
         self.y = self.y + self.yVel * dt
@@ -57,6 +78,7 @@ function Ball:update(dt)
                 finishThem = true
                 addAnnouncement("Finish Him/Her!!", 1)
             end
+            self:scoreEffects(1)
             self:reset()
         elseif self.x > love.graphics.getWidth() + self.radius then
             achievements:logStat("Game Over", 0)
@@ -72,9 +94,22 @@ function Ball:update(dt)
                 finishThem = true
                 addAnnouncement("Finish Him/Her!!", 0)
             end
+            self:scoreEffects(0)
             self:reset()
         end
     end
+end
+
+function Ball:scoreEffects(player)
+    if player == 0 then
+        self.scorePS:setDirection(math.pi)
+    elseif player == 1 then
+       self.scorePS:setDirection(0)
+    end
+    self.scorePS:setPosition(self.x, self.y)
+    self.scorePS:start()
+    ScreenFX.startEffect(ScreenFX.smallShake)
+    ScreenFX.startEffect(ScreenFX.greenFlash)
 end
 
 function Ball:reset()
