@@ -70,6 +70,16 @@ function love.update(dt)
     if curState == states.ip then
         -- networking screen
     elseif curState == states.ingame and love.graphics.hasFocus() then
+        -- slow-mo at end of match
+        if ball.slowDown > 0 then
+            ball.slowDown = ball.slowDown - dt
+            dt = dt*ball.slowDownMult
+            if ball.slowDown <= 0 then
+                curState = states.endgame
+                ScreenFX.activeFX = {}
+            end
+        end
+
         achievements:logStat("Time Passed",dt)
         ScreenFX.evaluateFX(dt)
         players[0]:update(dt)
@@ -235,5 +245,10 @@ function love.draw()
     end
     love.graphics.setCanvas()
     love.graphics.draw(fb2, 0, 0)
+    -- slow-mo at end of match
+    if curState == states.ingame and ball.slowDown > 0 then
+        love.graphics.setColor(0, 0, 0, ((Ball.slowDownTime - ball.slowDown)/Ball.slowDownTime) * 255)
+        love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
+    end
     love.graphics.setPixelEffect()
 end

@@ -35,11 +35,15 @@ Ball.scorePS:setTangentialAcceleration(0)
 Ball.scorePS:setSizes(2, 0)
 Ball.scorePS:stop()
 
+Ball.slowDownTime = 4
+Ball.slowDownMult = .2
+
 function Ball:new(x, y)
     local me = createMovingEntity(self, x, y)
 
     me.waiting = Ball.waitTime
     me.alive = true
+    me.slowDown = 0
     return me
 end
 
@@ -116,12 +120,13 @@ function Ball:scoreEffects(player)
 end
 
 function Ball:reset()
-    if players[0].score >= goalScore then
-        curState = states.endgame
-        winner = 0
-    elseif players[1].score >= goalScore then
-        curState = states.endgame
-        winner = 1
+    if players[0].score >= goalScore or players[1].score >= goalScore then
+        if players[0].score > players[1].score then
+            winner = 0
+        else
+            winner = 1
+        end
+        self.slowDown = Ball.slowDownTime
     end
     players[0]:reset()
     players[1]:reset()
