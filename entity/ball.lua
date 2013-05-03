@@ -45,9 +45,12 @@ end
 
 function Ball:draw()
     love.graphics.setColor(COLORS.white)
-    love.graphics.circle("fill", self.x, self.y, self.radius)
-
-    love.graphics.draw(self.scorePS, 0, 0)
+    if self.waiting > 0 then
+        love.graphics.circle("fill", self.x, self.y, self.radius + 4*math.sin(self.waiting*math.pi*4))
+        love.graphics.draw(self.scorePS, 0, 0)
+    else
+        love.graphics.circle("fill", self.x, self.y, self.radius)
+    end
 end
 
 function Ball:update(dt)
