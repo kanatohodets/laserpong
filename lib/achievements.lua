@@ -4,7 +4,7 @@ achievements = {Slingshot,Dunked,Disciplined,Sniper,Relentless,PaddleControl,
 achievements.Slingshot = {name = "WHIPLASH",hits = 0, targetHits = 4, delay = 0.3, cooldown = 0, lastHit = 0}
 achievements.Dunked = {name = "DUNKED",hitPlayer = nil, hitLaser = nil, lost = nil,delay = 0.5,cooldown = 0}
 achievements.Disciplined = {name = "DISCIPLINED",time = 6,counter = {0,0}}
-achievements.Sniper = {name = "SNIPER",sniped = nil}
+achievements.Sniper = {name = "SNIPER",sniped = nil,canSnipe = true}
 achievements.Relentless = {name = "RELENTLESS",hit = nil,regen = true}
 achievements.PaddleControl = {name = "PADDLE CONTROL",hit = nil}
 achievements.AbsentMinded = {name = "ABSENT-MINDED", initial = true, lost = nil}
@@ -60,7 +60,7 @@ function achievements:logStat(stat, value)
         end
 
         -- Sniper
-        if players[value].laserBank == players[value].laserMax - 1 and math.abs(ball.x-players[value].x) > love.graphics.getWidth()/3 then
+        if self.Sniper.canSnipe and players[value].laserBank == players[value].laserMax - 1 and math.abs(ball.x-players[value].x) > love.graphics.getWidth()/3 then
             self.Sniper.sniped = value
         end
 
@@ -91,7 +91,6 @@ function achievements:logStat(stat, value)
         end
 
     elseif stat == "Laser Shot" then -- value == team of laser
-
         -- Disciplined
         self.Disciplined.counter[value+1] = 0
 
@@ -101,12 +100,15 @@ function achievements:logStat(stat, value)
         	self.RapidFire.roundsFired[value+1] = self.RapidFire.roundsFired[value+1] + 1
         end
 
+        -- Sniper
+        if players[value].laserBank == Player.laserMax then
+            self.Sniper.canSnipe = true
+        else
+            self.Sniper.canSnipe = false
+        end
     elseif stat == "Regen" then -- value == team of player regenerating
-
         -- Relentless
         self.Relentless.regen = true
-
-
     elseif stat == "Game Over" then -- value == winning team
 
         -- Dunked
