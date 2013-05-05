@@ -30,6 +30,7 @@ starBackground = nil
 winner = 1
 goalScore = 11
 finishThem = false
+paused = false
 
 fb = love.graphics.newCanvas()
 fb2 = love.graphics.newCanvas()
@@ -70,6 +71,9 @@ function love.update(dt)
     if curState == states.ip then
         -- networking screen
     elseif curState == states.ingame and love.graphics.hasFocus() then
+        if paused then
+            return
+        end
         -- slow-mo at end of match
         if ball.slowDown > 0 then
             ball.slowDown = ball.slowDown - dt
@@ -132,18 +136,16 @@ function love.keypressed(key, unicode)
             ipString = ipString .. key
         end
     elseif curState == states.ingame then
-       if key == "q" then
+        if key == "q" then
             players[0]:moveUp()
-        end
-        if key == "s" then
+        elseif key == "s" then
             players[0]:moveDown()
-        end
-
-        if key == "p" then
+        elseif key == "p" then
             players[1]:moveUp()
-        end
-        if key == "l" then
+        elseif key == "l" then
             players[1]:moveDown()
+        elseif key == "b" then
+            paused = not paused
         end
     elseif curState == states.title then
         if key == "g" then
@@ -163,6 +165,9 @@ function love.keypressed(key, unicode)
             players[1].AI = true
             players[0].AI = true
         end
+    end
+    if key == "h" then
+        toggleMute()
     end
 end
 
@@ -194,35 +199,39 @@ function love.draw()
         love.graphics.print("Enter the host's ip address and press enter (leave blank if you're a server):", 100, 100)
         love.graphics.print("IP: "..ipString, 100, 150)
     elseif curState == states.ingame then
-        love.graphics.setBackgroundColor(ScreenFX.bgColor)
-        fb:clear()
-        love.graphics.setCanvas(fb)
-        love.graphics.setColor(COLORS.white)
-        love.graphics.setCanvas(fb2)
-        love.graphics.setPixelEffect(space)
-        love.graphics.draw(fb, 0, 0)
-        love.graphics.setPixelEffect()
-        starBackground:draw()
-        love.graphics.translate(ScreenFX.coordTranslate[1], ScreenFX.coordTranslate[2])
-        love.graphics.setColor(COLORS.white)
-        love.graphics.print(players[0].score, w / 3, h / 3)
-        love.graphics.print(players[1].score, w / 3 * 2, h / 3)
-        for i=0,1 do
-            players[i]:draw()
-        end
+        if paused then
+            printCentered("PAUSED", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
+        else
+            love.graphics.setBackgroundColor(ScreenFX.bgColor)
+            fb:clear()
+            love.graphics.setCanvas(fb)
+            love.graphics.setColor(COLORS.white)
+            love.graphics.setCanvas(fb2)
+            love.graphics.setPixelEffect(space)
+            love.graphics.draw(fb, 0, 0)
+            love.graphics.setPixelEffect()
+            starBackground:draw()
+            love.graphics.translate(ScreenFX.coordTranslate[1], ScreenFX.coordTranslate[2])
+            love.graphics.setColor(COLORS.white)
+            love.graphics.print(players[0].score, w / 3, h / 3)
+            love.graphics.print(players[1].score, w / 3 * 2, h / 3)
+            for i=0,1 do
+                players[i]:draw()
+            end
 
-        love.graphics.draw(Laser.player1HitPS, 0, 0)
-        love.graphics.draw(Laser.player2HitPS, 0, 0)
-        ball:draw()
-        displayAnnouncement()
-        if finishThem then
-            love.graphics.setPixelEffect(invertShader)
+            love.graphics.draw(Laser.player1HitPS, 0, 0)
+            love.graphics.draw(Laser.player2HitPS, 0, 0)
+            ball:draw()
+            displayAnnouncement()
+            if finishThem then
+                love.graphics.setPixelEffect(invertShader)
+            end
+            love.graphics.rectangle("line",0,0,w,h)
         end
-        love.graphics.rectangle("line",0,0,w,h)
     elseif curState == states.title then
         love.graphics.setPixelEffect(rainbow)
         love.graphics.setFont(fontBIG)
-        printCentered("LAZERPONG", 0, 40, w, h)
+        printCentered("LAZERPONG", 0, 70, w, h)
         love.graphics.setFont(font)
         love.graphics.setPixelEffect()
         printCentered("CONTROLS", 0, 0, w, h/3)
@@ -230,12 +239,14 @@ function love.draw()
         love.graphics.print("Q,S,D: up, down, shoot", (18 / 100) * w, (28/100) * h)
         love.graphics.print("Player 2:", (52 / 100) * w, (25/100)*h)
         love.graphics.print("P,L,K: up, down, shoot", (52 / 100) * w, (28 / 100) * h)
-        printCentered("Spacebar: change song", 0, 0, w, (75/100) * h)
-        printCentered("G: toggle fullscreen", 0, 0, w, (82/100)*h)
+        printCentered("Spacebar: change song", 0, 0, w, (74/100) * h)
+        printCentered("G: toggle fullscreen", 0, 0, w, (79/100)*h)
+        printCentered("B: pause game", 0, 0, w, (84/100)*h)
+        printCentered("H: mute", 0, 0, w, (89/100)*h)
 
         love.graphics.setLineWidth(4)
         love.graphics.rectangle("line", w/4, (70/100)*h, w/2, (13/100)*h)
-        love.graphics.rectangle("line", (16/100)*w, (14/100)*h, (68/100)*w, (31/100)*h)
+        love.graphics.rectangle("line", (16/100)*w, (14/100)*h, (68/100)*w, (35/100)*h)
         love.graphics.setLineWidth(2)
         printCentered("Press ENTER to start the game!", 0, h / 2, w, h / 2)
         printCentered("Press 7 to play the computer!", 0, h/2+20, w, h/2)
