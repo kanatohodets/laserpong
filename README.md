@@ -11,7 +11,7 @@ To play:
 
 
 Original design by Marcus Huderle, rebuilt using Love2d by Marcus Huderle, Ben
-Tyler, and Kiley Maki.
+Tyler, Kiley Maki, and Bobby Davis.
 
 Thanks to [keygenjukebox](http://keygenjukebox.com) and the original authors of:
 
@@ -21,6 +21,7 @@ Thanks to [keygenjukebox](http://keygenjukebox.com) and the original authors of:
 * RES - FILE RECOVERY 7 3B111KG
 
 for the awesome chiptunes.
+
 
 
 
