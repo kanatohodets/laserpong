@@ -9,6 +9,9 @@ achievements.Relentless = {name = "RELENTLESS", hit = nil, regen = true}
 achievements.PaddleControl = {name = "PADDLE CONTROL", hit = nil}
 achievements.AbsentMinded = {name = "ABSENT-MINDED", initial = true, lost = nil}
 achievements.RapidFire = {name = "RAPID FIRE",target = Player.laserMax * 3,limit = 3,timer = {0,0},roundsFired = {0,0}}
+achievements.Regenerator = {name = "REGENERATOR",small = {false,false}}
+achievements.ZenMaster = {name = "ZEN MASTER", target = 0.75, time = {0,0}, hit = {false,false}}
+achievements.Changeup = {name = "CHANGE UP",achieved = {false,false}}
 
 function achievements:logStat(stat, value)
     if stat == "Time Passed" then -- value == dt
@@ -40,6 +43,12 @@ function achievements:logStat(stat, value)
         	self.RapidFire.roundsFired[2] = 0
         else
         	self.RapidFire.timer[2] = self.RapidFire.timer[2] + value
+        end
+
+        -- Zen Master
+        if ball.waiting <= 0 then
+            self.ZenMaster.time[1] = self.ZenMaster.time[1] + value
+            self.ZenMaster.time[2] = self.ZenMaster.time[2] + value        
         end
 
     elseif stat == "Ball Hit Laser" then -- value == team of laser
@@ -82,6 +91,16 @@ function achievements:logStat(stat, value)
         -- Absent Minded
         self.AbsentMinded.initial = false
 
+        -- Zen Master
+        if self.ZenMaster.time[value+1] > self.ZenMaster.target and ball.yVel >= ball.yVelMax/4  then
+            self.ZenMaster.hit[value+1] = true
+        end
+
+        -- Change up
+        if ball.xVel >= (3/2) * Ball.xVel then
+            self.Changeup.achieved[value+1] = true
+        end
+
     elseif stat == "Laser Hit Player" then -- value == team of laser    
 
         -- Relentless
@@ -107,8 +126,20 @@ function achievements:logStat(stat, value)
             self.Sniper.canSnipe = false
         end
     elseif stat == "Regen" then -- value == team of player regenerating
+        
         -- Relentless
         self.Relentless.regen = true
+
+        -- Regenerator
+        if players[value].height <= Player.minHeight then
+            self.Regenerator.small[value+1] = true
+        end
+
+    elseif stat == "Move" then -- value == team of player moving
+
+        -- Zen Master
+        self.ZenMaster.time[value+1] = 0
+
     elseif stat == "Game Over" then -- value == winning team
 
         -- Dunked
@@ -133,6 +164,14 @@ function achievements:logStat(stat, value)
         -- Rapid Fire
         self.RapidFire.roundsFired[1] = 0
         self.RapidFire.roundsFired[2] = 0
+
+        -- Regenerator
+        self.Regenerator.small[1] = false
+        self.Regenerator.small[2] = false
+
+        -- Zen Master
+        self.ZenMaster.time[1] = 0
+        self.ZenMaster.time[2] = 0
 
     end
 end
@@ -182,6 +221,32 @@ function achievements:getAchieved()
     if self.RapidFire.roundsFired[2] > self.RapidFire.target then
         table.insert(achieved,{name = self.RapidFire.name, player = 1})
         self.RapidFire.roundsFired[2] = 0
+    end
+    if self.Regenerator.small[1] == true and players[0].height == Player.height then
+        table.insert(achieved,{name = self.Regenerator.name,player = 0})
+        self.Regenerator.small[1] = false
+    end
+    if self.Regenerator.small[2] == true and players[1].height == Player.height then
+        table.insert(achieved,{name = self.Regenerator.name,player = 1})
+        self.Regenerator.small[2] = false
+    end
+    if self.ZenMaster.hit[1] == true then
+        table.insert(achieved,{name = self.ZenMaster.name,player = 0})
+        self.ZenMaster.hit[1] = false
+        self.ZenMaster.time[1] = 0
+    end
+    if self.ZenMaster.hit[2] == true then
+        table.insert(achieved,{name = self.ZenMaster.name,player = 1})
+        self.ZenMaster.hit[2] = false
+        self.ZenMaster.time[2] = 0
+    end
+    if self.Changeup.achieved[1] == true then
+        table.insert(achieved,{name = self.Changeup.name,player = 0})
+        self.Changeup.achieved[1] = false
+    end
+    if self.Changeup.achieved[2] == true then
+        table.insert(achieved,{name = self.Changeup.name,player = 1})
+        self.Changeup.achieved[2] = false
     end
     return achieved
 end
