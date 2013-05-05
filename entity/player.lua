@@ -215,19 +215,6 @@ function Player:doAI()
     self.moveQueue = {}
     self:shootLaser()
     
-    --[[
-    if (self.team == 1 and ball.xVel > 0) or (self.team == 0 and ball.xVel < 0) then
-        
-    else
-        -- move towards center
-        if math.abs(self.y - love.graphics.getHeight()/2) > self.height/2 then
-            if self.y > love.graphics.getHeight()/2 then
-                self:moveUp()
-            else
-                self:moveDown()
-            end
-        end
-    end]]
     local dt = math.abs(self.x - ball.x)/math.abs(ball.xVel)
     if (self.AIType == 0) then
         if (self.team == 1 and ball.xVel < 0) then
