@@ -2,11 +2,11 @@ achievements = {Slingshot,Dunked,Disciplined,Sniper,Relentless,PaddleControl,
                 AbsentMinded,RapidFire,Regenerator,ZenMaster,Skunked,Changeup}
 
 achievements.Slingshot = {name = "WHIPLASH",hits = 0, targetHits = 4, delay = 0.3, cooldown = 0, lastHit = 0}
-achievements.Dunked = {name = "DUNKED",hitPlayer = nil, hitLaser = nil, lost = nil,delay = 0.5,cooldown = 0}
-achievements.Disciplined = {name = "DISCIPLINED",time = 6,counter = {0,0}}
-achievements.Sniper = {name = "SNIPER",sniped = nil,canSnipe = true}
-achievements.Relentless = {name = "RELENTLESS",hit = nil,regen = true}
-achievements.PaddleControl = {name = "PADDLE CONTROL",hit = nil}
+achievements.Dunked = {name = "DUNKED", hitPlayer = nil, hitLaser = nil, lost = nil, delay = 0.65, cooldown = 0}
+achievements.Disciplined = {name = "DISCIPLINED", time = 6, counter = {0,0}}
+achievements.Sniper = {name = "SNIPER", sniped = nil, canSnipe = true}
+achievements.Relentless = {name = "RELENTLESS", hit = nil, regen = true}
+achievements.PaddleControl = {name = "PADDLE CONTROL", hit = nil}
 achievements.AbsentMinded = {name = "ABSENT-MINDED", initial = true, lost = nil}
 achievements.RapidFire = {name = "RAPID FIRE",target = Player.laserMax * 3,limit = 3,timer = {0,0},roundsFired = {0,0}}
 
