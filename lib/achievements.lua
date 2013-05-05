@@ -2,7 +2,7 @@ achievements = {Slingshot,Dunked,Disciplined,Sniper,Relentless,PaddleControl,
                 AbsentMinded,RapidFire,Regenerator,ZenMaster,Skunked,Changeup}
 
 achievements.Slingshot = {name = "WHIPLASH",hits = 0, targetHits = 4, delay = 0.3, cooldown = 0, lastHit = 0}
-achievements.Dunked = {name = "DUNKED", hitPlayer = nil, hitLaser = nil, lost = nil, delay = 0.65, cooldown = 0}
+achievements.Dunked = {name = "DUNKED", hitPlayer = nil, scoredOnPlayer = nil, delay = 0.65, cooldown = 0}
 achievements.Disciplined = {name = "DISCIPLINED", time = 6, counter = {0,0}}
 achievements.Sniper = {name = "SNIPER", sniped = nil, canSnipe = true}
 achievements.Relentless = {name = "RELENTLESS", hit = nil, regen = true}
@@ -20,11 +20,12 @@ function achievements:logStat(stat, value)
         self.Slingshot.cooldown = self.Slingshot.cooldown + value
 
         -- Dunked
-        self.Dunked.cooldown = self.Dunked.cooldown + value
-        if self.Dunked.cooldown > self.Dunked.delay then
-            self.Dunked.hitPlayer = nil
-            self.Dunked.hitLaser = nil
-            self.Dunked.lost = nil
+        if self.Dunked.hitPlayer ~= nil then
+            self.Dunked.cooldown = self.Dunked.cooldown + value
+            if self.Dunked.cooldown > self.Dunked.delay then
+                self.Dunked.hitPlayer = nil
+                self.Dunked.cooldown = 0
+            end
         end
 
         -- Disciplined
@@ -62,12 +63,6 @@ function achievements:logStat(stat, value)
         end
         self.Slingshot.cooldown = 0
 
-        -- Dunked
-        if self.Dunked.hitPlayer ~= nil then
-            self.Dunked.hitLaser = value
-            self.Dunked.cooldown = 0
-        end
-
         -- Sniper
         if self.Sniper.canSnipe and players[value].laserBank == players[value].laserMax - 1 and math.abs(ball.x-players[value].x) > love.graphics.getWidth()/3 then
             self.Sniper.sniped = value
@@ -80,7 +75,6 @@ function achievements:logStat(stat, value)
 
         -- Dunked
         self.Dunked.hitPlayer = value
-        self.Dunked.hitLaser = nil
         self.Dunked.cooldown = 0
 
         -- Paddle Control
@@ -140,12 +134,13 @@ function achievements:logStat(stat, value)
         -- Zen Master
         self.ZenMaster.time[value+1] = 0
 
-    elseif stat == "Game Over" then -- value == winning team
+    elseif stat == "Game Over" then -- value == losing team
 
         -- Dunked
-        if self.Dunked.hitLaser ~= nil then
-            self.Dunked.lost = value
-            cooldown = 0
+        if self.Dunked.cooldown <= self.Dunked.delay and self.Dunked.hitPlayer then
+            self.Dunked.hitPlayer = nil
+            self.Dunked.scoredOnPlayer = value
+            self.Dunked.cooldown = 0
         end
 
         -- Disciplined
@@ -157,7 +152,7 @@ function achievements:logStat(stat, value)
 
         -- Absent Minded
         if self.AbsentMinded.initial then
-            self.AbsentMinded.lost = (value+1)%2
+            self.AbsentMinded.lost = value
         end
         self.AbsentMinded.initial = true
 
@@ -183,11 +178,10 @@ function achievements:getAchieved()
         self.Slingshot.hits = 0
         self.Slingshot.cooldown = 0
     end
-    if self.Dunked.lost ~= nil and self.Dunked.hitPlayer ~= self.Dunked.hitLaser and self.Dunked.hitLaser == self.Dunked.lost then
-        table.insert(achieved,{name = self.Dunked.name, player = self.Dunked.hitPlayer})
+    if self.Dunked.scoredOnPlayer then
+        table.insert(achieved,{name = self.Dunked.name, player = self.Dunked.scoredOnPlayer})
         self.Dunked.hitPlayer = nil
-        self.Dunked.hitLaser = nil
-        self.Dunked.lost = nil
+        self.Dunked.scoredOnPlayer = nil
         self.Dunked.cooldown = 0
     end
     if self.Disciplined.counter[1] > self.Disciplined.time then

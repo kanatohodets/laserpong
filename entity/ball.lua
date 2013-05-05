@@ -73,7 +73,7 @@ function Ball:update(dt)
         end
 
         if self.x < -self.radius then
-            achievements:logStat("Game Over", 1)
+            achievements:logStat("Game Over", 0)
             players[1].score = players[1].score + 1
 
             local p1GamePoint = players[1].score == goalScore - 1
@@ -88,7 +88,7 @@ function Ball:update(dt)
             self:scoreEffects(1)
             self:reset()
         elseif self.x > love.graphics.getWidth() + self.radius then
-            achievements:logStat("Game Over", 0)
+            achievements:logStat("Game Over", 1)
             players[0].score = players[0].score + 1
 
             local p0GamePoint = players[0].score == goalScore - 1
