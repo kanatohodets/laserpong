@@ -11,7 +11,7 @@ achievements.AbsentMinded = {name = "ABSENT-MINDED", initial = true, lost = nil}
 achievements.RapidFire = {name = "RAPID FIRE",target = Player.laserMax * 3,limit = 3,timer = {0,0},roundsFired = {0,0}}
 achievements.Regenerator = {name = "REGENERATOR",small = {false,false}}
 achievements.ZenMaster = {name = "ZEN MASTER", target = 0.75, time = {0,0}, hit = {false,false}}
-achievements.Changeup = {name = "CHANGE UP",achieved = {false,false}}
+achievements.Changeup = {name = "CHANGEUP",achieved = {false,false}}
 
 function achievements:logStat(stat, value)
     if stat == "Time Passed" then -- value == dt
