@@ -89,11 +89,13 @@ function Player:update(dt)
         self:doAI()
     end
     if self.moveQueue[1] == 1 then
+        achievements:logStat("Move",self.team)
         self.y = self.y + self.yVel * dt
         if self.bottom() > love.graphics.getHeight() then
             self.y = love.graphics.getHeight() - self.height/2
         end
     elseif self.moveQueue[1] == -1 then
+        achievements:logStat("Move",self.team)
         self.y = self.y - self.yVel * dt
         if self.y < self.height / 2 then
             self.y = self.height / 2
