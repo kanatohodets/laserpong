@@ -208,14 +208,10 @@ end
 function Player:doAI()
     self.moveQueue = {}
     self:shootLaser()
-    if (self.team == 1 and ball.x > love.graphics.getWidth()/2) or (self.team == 0 and ball.x < love.graphics.getWidth()/2) then
-        if math.abs(ball.y - self.y) > self.height / 2 then
-            if ball.y > self.y then
-                self:moveDown()
-            elseif ball.y < self.y then
-                self:moveUp()
-            end
-        end
+    
+    --[[
+    if (self.team == 1 and ball.xVel > 0) or (self.team == 0 and ball.xVel < 0) then
+        
     else
         -- move towards center
         if math.abs(self.y - love.graphics.getHeight()/2) > self.height/2 then
@@ -224,6 +220,35 @@ function Player:doAI()
             else
                 self:moveDown()
             end
+        end
+    end]]
+    
+    --Ball is moving towards us, predict where it will hit
+    local dt = math.abs(self.x - ball.x)/math.abs(ball.xVel)
+    local futureY = dt*ball.yVel+ball.y
+    local endDir = 0
+    
+    while futureY < 0 or futureY > love.graphics.getHeight() do
+        if futureY < 0 then
+            futureY = futureY + love.graphics.getHeight()
+            endDir = 1
+        else
+            futureY = futureY - love.graphics.getHeight()
+            endDir = -1
+        end
+    end
+    
+    if endDir == -1 then
+        futureY = love.graphics.getHeight() - futureY
+    elseif endDir == 1 then
+        futureY = love.graphics.getHeight() - futureY
+    end
+    
+    if math.abs(futureY - self.y) > self.height / 2 then
+        if futureY > self.y then
+            self:moveDown()
+        elseif futureY < self.y then
+            self:moveUp()
         end
     end
 end
