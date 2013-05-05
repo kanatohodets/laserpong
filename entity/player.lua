@@ -33,6 +33,12 @@ function Player:new(x, y, teamNum, AI)
     me.team = teamNum
     me.score = 0
     me.AI = AI
+    
+    if math.random() > .5 then
+        me.AIType = 0
+    else
+        me.AIType = 1
+    end
 
     me.stationaryTime = 0
 
@@ -222,9 +228,17 @@ function Player:doAI()
             end
         end
     end]]
+    local dt = math.abs(self.x - ball.x)/math.abs(ball.xVel)
+    if (self.AIType == 0) then
+        if (self.team == 1 and ball.xVel < 0) then
+            dt = math.abs(players[0].x - ball.x)/math.abs(ball.xVel)
+        elseif (self.team == 0 and ball.xVel > 0) then
+            dt = math.abs(players[1].x - ball.x)/math.abs(ball.xVel)
+        end
+    end
     
     --Ball is moving towards us, predict where it will hit
-    local dt = math.abs(self.x - ball.x)/math.abs(ball.xVel)
+    --local dt = math.abs(self.x - ball.x)/math.abs(ball.xVel)
     local futureY = dt*ball.yVel+ball.y
     local endDir = 0
     
